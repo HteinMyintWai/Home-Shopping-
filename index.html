@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ကိုယ်ပိုင် ကုန်စုံဆိုင် - All-in-One Cloud POS</title>
+    <title>ကိုယ်ပိုင် ကုန်စုံဆိုင် - Smart POS</title>
     <style>
         :root { --primary: #6366f1; --success: #10b981; --danger: #ef4444; --dark: #0f172a; --bg: #f4f7fe; }
         body { font-family: sans-serif; background: var(--bg); margin: 0; padding-bottom: 80px; color: var(--dark); -webkit-tap-highlight-color: transparent; }
@@ -20,9 +20,10 @@
         .info-tag { font-size: 10px; color: #64748b; font-weight: bold; display: block; text-align: center; margin-top: 3px; }
         .btn-buy { width: 100%; padding: 10px; border-radius: 12px; border: none; color: white; font-weight: bold; font-size: 12px; cursor: pointer; margin-top: 6px; }
 
-        /* Login */
+        /* Login Screen */
         #loginScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; box-sizing: border-box; }
-        
+        .login-box { background: white; padding: 30px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 400px; text-align: center; }
+
         .fab-container { position: fixed; bottom: 25px; right: 20px; display: flex; flex-direction: column; gap: 15px; z-index: 1000; }
         .fab { width: 60px; height: 60px; border-radius: 20px; border: none; color: white; font-size: 24px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; }
         .fab-settings { background: #64748b; }
@@ -36,17 +37,19 @@
         input, select { width: 100%; padding: 15px; border: 2px solid #f1f5f9; border-radius: 14px; font-size: 15px; margin-bottom: 12px; box-sizing: border-box; outline: none; background: #f8fafc; }
         .calc-box { background: var(--dark); color: white; padding: 18px; border-radius: 20px; margin-bottom: 18px; font-size: 14px; }
         .inv-item { background: #fff; padding: 15px; border-radius: 20px; margin-bottom: 12px; border: 1px solid #eef2f6; display: flex; justify-content: space-between; align-items: center; }
-        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--dark); color: white; padding: 12px 25px; border-radius: 50px; font-size: 13px; z-index: 6000; display: none; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); width: 80%; }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--dark); color: white; padding: 12px 25px; border-radius: 50px; font-size: 13px; z-index: 6000; display: none; text-align: center; width: 80%; }
     </style>
 </head>
 <body>
 
 <div id="loginScreen">
-    <h2 style="font-weight: 900; font-size: 28px; margin-bottom: 5px;">LOGIN</h2>
-    <p style="color: #64748b; margin-bottom: 30px;">Username & Password ရိုက်ထည့်ပါ</p>
-    <input type="text" id="loginUser" placeholder="Username">
-    <input type="password" id="loginPass" placeholder="Password">
-    <button onclick="login()" style="width:100%; padding:18px; border-radius:18px; border:none; background:var(--primary); color:white; font-weight:bold; font-size:16px;">LOG IN</button>
+    <div class="login-box">
+        <h2 style="font-weight: 900; margin-bottom: 5px;">MY POS</h2>
+        <p style="color: #64748b; margin-bottom: 25px;">လိုင်းမရှိလည်း Login ဝင်နိုင်သည်</p>
+        <input type="text" id="loginUser" placeholder="Username">
+        <input type="password" id="loginPass" placeholder="Password">
+        <button onclick="login()" style="width:100%; padding:18px; border-radius:18px; border:none; background:var(--primary); color:white; font-weight:bold; font-size:16px;">LOG IN</button>
+    </div>
 </div>
 
 <div id="appMain" style="display:none;">
@@ -66,11 +69,10 @@
 
 <div id="qtySheet" class="sheet">
     <h3 id="qtyTitle" style="margin-top:0;">အရေအတွက်</h3>
-    <p id="qtySub" style="color:#64748b; margin-bottom:10px;"></p>
-    <div id="qtyStockRem" style="margin-bottom:20px; font-weight:bold; color:var(--danger); font-size:15px; background:#fff1f2; padding:10px; border-radius:10px; text-align:center;"></div>
-    <input type="number" id="qtyInput" placeholder="အရေအတွက် ရိုက်ထည့်ပါ...">
+    <div id="qtyStockRem" style="margin-bottom:15px; font-weight:bold; color:var(--danger); background:#fff1f2; padding:10px; border-radius:10px; text-align:center;"></div>
+    <input type="number" id="qtyInput" placeholder="အရေအတွက် ရိုက်ထည့်ပါ..." autofocus>
     <input type="hidden" id="qtyIdx"><input type="hidden" id="qtyType">
-    <button onclick="confirmAddToCart()" style="width:100%; padding:18px; border-radius:18px; border:none; background:var(--primary); color:white; font-weight:bold; font-size:16px;">ပေါင်းမည်</button>
+    <button onclick="confirmAddToCart()" style="width:100%; padding:18px; border-radius:18px; border:none; background:var(--primary); color:white; font-weight:bold;">ပေါင်းမည်</button>
 </div>
 
 <div id="cartSheet" class="sheet">
@@ -80,8 +82,8 @@
         <div style="font-size: 32px; font-weight: 900; color: var(--primary);"><span id="totalTxt">0</span> Ks</div>
         <div id="profitDiv" style="font-size: 14px; font-weight: bold; color: var(--danger); margin-top: 5px; display:none;">(အမြတ်: <span id="totalProfitTxt">0</span> Ks)</div>
     </div>
-    <button id="checkoutBtn" onclick="checkout()" style="width:100%; padding:18px; border-radius:18px; border:none; background:var(--success); color:white; font-weight:bold; margin-top: 20px;">ရောင်းမည် (လက်ကျန်လျှော့မည်)</button>
-    <button onclick="logout()" style="width:100%; padding:15px; border-radius:18px; border:none; background:#f1f5f9; color:var(--dark); font-weight:bold; margin-top: 10px;">Logout ထွက်မည်</button>
+    <button id="checkoutBtn" onclick="checkout()" style="width:100%; padding:18px; border-radius:18px; border:none; background:var(--success); color:white; font-weight:bold; margin-top: 20px;">ရောင်းမည်</button>
+    <button onclick="logout()" style="width:100%; padding:15px; border-radius:18px; border:none; background:#f1f5f9; color:var(--dark); font-weight:bold; margin-top: 10px;">Logout</button>
 </div>
 
 <div id="managerModal" class="sheet">
@@ -103,8 +105,8 @@
         <div><small>လက်ကျန်</small><input type="number" id="p_st" value="0"></div>
     </div>
     <div class="calc-box">
-        <div style="display:flex; justify-content:space-between;">ထုတ်ဈေး: <b id="v_bp">0</b></div>
-        <div style="display:flex; justify-content:space-between;">တစ်ခုဈေး: <b id="v_up">0</b></div>
+        <div style="display:flex; justify-content:space-between;">ထုတ်ဈေး: <b id="v_bp">0</b> Ks</div>
+        <div style="display:flex; justify-content:space-between;">တစ်ခုဈေး: <b id="v_up">0</b> Ks</div>
     </div>
     <button id="saveBtn" class="btn-buy" style="background:var(--primary); padding:18px;" onclick="save()">စာရင်းထဲသိမ်းမည်</button>
     <div id="invList" style="margin-top:20px;"></div>
@@ -142,17 +144,19 @@
 
     let db = [], cart = [], curF = 'အားလုံး', curImg = "", editIdx = -1, currentUserRole = "";
     let cats = JSON.parse(localStorage.getItem('my_cats')) || ['စားသောက်ကုန်', 'အလှကုန်'];
-    let accounts = { adminU: "admin", adminP: "123", staffU: "staff", staffP: "456" };
+    let accounts = JSON.parse(localStorage.getItem('my_pos_acc')) || { adminU: "admin", adminP: "123", staffU: "staff", staffP: "456" };
 
     // Sync Accounts & Products
-    onSnapshot(doc(fsDb, "settings", "accounts"), (snap) => { if(snap.exists()) accounts = snap.data(); });
+    onSnapshot(doc(fsDb, "settings", "accounts"), (snap) => { 
+        if(snap.exists()) { accounts = snap.data(); localStorage.setItem('my_pos_acc', JSON.stringify(accounts)); } 
+    });
     onSnapshot(collection(fsDb, "products"), (snap) => { db = snap.docs.map(d => ({ id: d.id, ...d.data() })); render(); });
 
     window.login = () => {
         let u = document.getElementById('loginUser').value, p = document.getElementById('loginPass').value;
         if(u === accounts.adminU && p === accounts.adminP) { currentUserRole = "admin"; startApp(); }
         else if(u === accounts.staffU && p === accounts.staffP) { currentUserRole = "staff"; startApp(); }
-        else alert("မှားနေပါသည်");
+        else alert("Username/Password မှားယွင်းနေပါသည်");
     };
 
     function startApp() {
@@ -161,16 +165,22 @@
         if(currentUserRole === "admin") {
             document.getElementById('fabAdd').style.display = "flex";
             document.getElementById('profitDiv').style.display = "block";
+            document.getElementById('setAdminUser').value = accounts.adminU;
+            document.getElementById('setAdminPass').value = accounts.adminP;
+            document.getElementById('setStaffUser').value = accounts.staffU;
+            document.getElementById('setStaffPass').value = accounts.staffP;
         }
+        showToast("Logged in as " + currentUserRole);
     }
 
     window.logout = () => location.reload();
 
     window.updateSettings = async () => {
-        if(currentUserRole !== "admin") return alert("Admin သာ ပြင်နိုင်သည်");
+        if(currentUserRole !== "admin") return alert("Admin သာ ပြင်ဆင်နိုင်သည်");
         accounts = { adminU: document.getElementById('setAdminUser').value, adminP: document.getElementById('setAdminPass').value, staffU: document.getElementById('setStaffUser').value, staffP: document.getElementById('setStaffPass').value };
         await setDoc(doc(fsDb, "settings", "accounts"), accounts);
-        showToast("သိမ်းပြီးပါပြီ"); closeAll();
+        localStorage.setItem('my_pos_acc', JSON.stringify(accounts));
+        showToast("သိမ်းဆည်းပြီးပါပြီ"); closeAll();
     };
 
     window.showToast = (msg) => { let t = document.getElementById('toast'); t.innerText = msg; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2500); };
@@ -187,7 +197,7 @@
     window.confirmAddToCart = () => {
         let i = document.getElementById('qtyIdx').value, t = document.getElementById('qtyType').value, q = parseFloat(document.getElementById('qtyInput').value) || 0;
         let p = db[i], packs = (t==='အိတ်'?q:q/p.ps);
-        if(packs > p.st + 0.001) return alert("လက်ကျန်မရှိပါ");
+        if(packs > p.st + 0.001) return alert("လက်ကျန် မလောက်ပါ");
         let price = (t==='အိတ်'?p.bp:p.up), profit = (t==='အိတ်'? q*(p.bp-p.cp) : q*((p.bp-p.cp)/p.ps));
         cart.push({ docId: p.id, n: p.name, q, t: (t==='အိတ်'?'ထုတ်':'ခု'), packsToRemove: packs, tot: q*price, profit });
         updateCart(); closeAll();
@@ -199,7 +209,7 @@
             let p = db.find(x => x.id === item.docId);
             await updateDoc(doc(fsDb, "products", item.docId), { st: p.st - item.packsToRemove });
         }
-        cart = []; updateCart(); closeAll(); showToast("ရောင်းပြီးပါပြီ");
+        cart = []; updateCart(); closeAll(); showToast("ရောင်းချမှု အောင်မြင်ပါသည်");
         document.getElementById('checkoutBtn').disabled = false;
     };
 
