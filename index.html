@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ကိုယ်ပိုင် ကုန်စုံဆိုင် - Secure Cloud POS</title>
+    <title>ကိုယ်ပိုင် ကုန်စုံဆိုင် - All-in-One Cloud POS</title>
     <style>
         :root { --primary: #6366f1; --success: #10b981; --danger: #ef4444; --dark: #0f172a; --bg: #f4f7fe; }
         body { font-family: sans-serif; background: var(--bg); margin: 0; padding-bottom: 80px; color: var(--dark); -webkit-tap-highlight-color: transparent; }
@@ -15,32 +15,35 @@
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
         .card { background: white; border-radius: 22px; padding: 12px; border: 1px solid #eef2f6; box-shadow: 0 2px 10px rgba(0,0,0,0.02); position: relative; }
         .card img { width: 100%; height: 100px; object-fit: cover; border-radius: 18px; background: #f8fafc; }
+        .out-of-stock-overlay { position: absolute; top: 12px; left: 12px; right: 12px; height: 100px; background: rgba(0,0,0,0.6); border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-size: 11px; font-weight: bold; z-index: 5; text-align: center; }
         .price-tag { background: #f0f4ff; color: var(--primary); padding: 4px 6px; border-radius: 8px; font-size: 10px; font-weight: 900; }
         .info-tag { font-size: 10px; color: #64748b; font-weight: bold; display: block; text-align: center; margin-top: 3px; }
         .btn-buy { width: 100%; padding: 10px; border-radius: 12px; border: none; color: white; font-weight: bold; font-size: 12px; cursor: pointer; margin-top: 6px; }
-        
-        /* Login Screen */
+
+        /* Login */
         #loginScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; box-sizing: border-box; }
         
         .fab-container { position: fixed; bottom: 25px; right: 20px; display: flex; flex-direction: column; gap: 15px; z-index: 1000; }
         .fab { width: 60px; height: 60px; border-radius: 20px; border: none; color: white; font-size: 24px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; }
         .fab-settings { background: #64748b; }
-        .fab-add { background: var(--dark); }
+        .fab-add { background: var(--dark); display: none; }
         .fab-cart { background: var(--primary); position: relative; }
+        .cart-count { position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; font-size: 11px; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid white; }
 
         .sheet { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 2500; border-top-left-radius: 35px; border-top-right-radius: 35px; padding: 25px; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-sizing: border-box; max-height: 90vh; overflow-y: auto; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); }
         .sheet.show { bottom: 0; }
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 2000; backdrop-filter: blur(4px); }
         input, select { width: 100%; padding: 15px; border: 2px solid #f1f5f9; border-radius: 14px; font-size: 15px; margin-bottom: 12px; box-sizing: border-box; outline: none; background: #f8fafc; }
+        .calc-box { background: var(--dark); color: white; padding: 18px; border-radius: 20px; margin-bottom: 18px; font-size: 14px; }
+        .inv-item { background: #fff; padding: 15px; border-radius: 20px; margin-bottom: 12px; border: 1px solid #eef2f6; display: flex; justify-content: space-between; align-items: center; }
         .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--dark); color: white; padding: 12px 25px; border-radius: 50px; font-size: 13px; z-index: 6000; display: none; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); width: 80%; }
-        .admin-only { display: none; }
     </style>
 </head>
 <body>
 
 <div id="loginScreen">
     <h2 style="font-weight: 900; font-size: 28px; margin-bottom: 5px;">LOGIN</h2>
-    <p style="color: #64748b; margin-bottom: 30px;">ဆိုင်စာရင်းသုံးရန် Login ဝင်ပါ</p>
+    <p style="color: #64748b; margin-bottom: 30px;">Username & Password ရိုက်ထည့်ပါ</p>
     <input type="text" id="loginUser" placeholder="Username">
     <input type="password" id="loginPass" placeholder="Password">
     <button onclick="login()" style="width:100%; padding:18px; border-radius:18px; border:none; background:var(--primary); color:white; font-weight:bold; font-size:16px;">LOG IN</button>
@@ -53,7 +56,7 @@
 
     <div class="fab-container">
         <button class="fab fab-settings" onclick="toggleSheet('settingSheet')">⚙️</button>
-        <button class="fab fab-add admin-only" onclick="openManager()">＋</button>
+        <button id="fabAdd" class="fab fab-add" onclick="openManager()">＋</button>
         <button class="fab fab-cart" onclick="toggleSheet('cartSheet')">🛒 <span class="cart-count" id="cartCount">0</span></button>
     </div>
 </div>
@@ -75,15 +78,22 @@
     <div id="cartList"></div>
     <div style="margin-top: 25px; text-align: center;">
         <div style="font-size: 32px; font-weight: 900; color: var(--primary);"><span id="totalTxt">0</span> Ks</div>
+        <div id="profitDiv" style="font-size: 14px; font-weight: bold; color: var(--danger); margin-top: 5px; display:none;">(အမြတ်: <span id="totalProfitTxt">0</span> Ks)</div>
     </div>
-    <button id="checkoutBtn" onclick="checkout()" style="width:100%; padding:18px; border-radius:18px; border:none; background:var(--success); color:white; font-weight:bold; margin-top: 20px;">ရောင်းမည်</button>
+    <button id="checkoutBtn" onclick="checkout()" style="width:100%; padding:18px; border-radius:18px; border:none; background:var(--success); color:white; font-weight:bold; margin-top: 20px;">ရောင်းမည် (လက်ကျန်လျှော့မည်)</button>
     <button onclick="logout()" style="width:100%; padding:15px; border-radius:18px; border:none; background:#f1f5f9; color:var(--dark); font-weight:bold; margin-top: 10px;">Logout ထွက်မည်</button>
 </div>
 
 <div id="managerModal" class="sheet">
     <h3 id="modalTitle" style="margin:0 0 15px 0;">📦 ပစ္စည်းစီမံခြင်း</h3>
+    <div style="width:100%; height:100px; background:#f8fafc; border-radius:18px; margin-bottom:18px; display:flex; align-items:center; justify-content:center; border:2px dashed #ddd;" onclick="document.getElementById('p_img').click()">
+        <img id="imgPre" style="width:100%; height:100%; object-fit:cover; border-radius:18px; display:none;">
+        <span id="imgTxt">📷 ပုံတင်ရန်</span>
+    </div>
+    <input type="file" id="p_img" accept="image/*" style="display:none" onchange="loadImg(this)">
     <input type="text" id="p_name" placeholder="ပစ္စည်းအမည်">
     <select id="p_cat"></select>
+    <div style="display:flex; gap:10px; margin-bottom:12px;"><input type="text" id="new_cat_input" placeholder="အမျိုးအစားသစ်..." style="margin-bottom:0;"><button onclick="addNewCat()" style="padding:0 20px; background:var(--dark); color:white; border:none; border-radius:14px; font-weight:bold;">ထည့်</button></div>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
         <div><small>ဝယ်ဈေး</small><input type="number" id="p_cp" value="0" oninput="calc()"></div>
         <div><small>အမြတ် %</small><input type="number" id="p_pp" value="10" oninput="calc()"></div>
@@ -92,26 +102,28 @@
         <div><small>တစ်ထုတ်ပါဝင်မှု</small><input type="number" id="p_ps" value="1" oninput="calc()"></div>
         <div><small>လက်ကျန်</small><input type="number" id="p_st" value="0"></div>
     </div>
-    <button id="saveBtn" class="btn-buy" style="background:var(--primary); padding:18px; font-size:15px;" onclick="save()">စာရင်းထဲသိမ်းမည်</button>
-    <div id="invList" style="margin-top:30px;"></div>
+    <div class="calc-box">
+        <div style="display:flex; justify-content:space-between;">ထုတ်ဈေး: <b id="v_bp">0</b></div>
+        <div style="display:flex; justify-content:space-between;">တစ်ခုဈေး: <b id="v_up">0</b></div>
+    </div>
+    <button id="saveBtn" class="btn-buy" style="background:var(--primary); padding:18px;" onclick="save()">စာရင်းထဲသိမ်းမည်</button>
+    <div id="invList" style="margin-top:20px;"></div>
 </div>
 
 <div id="settingSheet" class="sheet">
-    <h3 style="margin:0 0 20px 0;">⚙️ အကောင့်ပြင်ဆင်ရန်</h3>
-    <p style="font-weight:bold; color:var(--primary)">Admin အကောင့် (ဆိုင်ရှင်)</p>
+    <h3 style="margin:0 0 20px 0;">⚙️ Setting & Accounts</h3>
+    <p style="font-weight:bold; color:var(--primary)">Admin (ဆိုင်ရှင်)</p>
     <input type="text" id="setAdminUser" placeholder="Admin Username">
     <input type="text" id="setAdminPass" placeholder="Admin Password">
-    
-    <p style="font-weight:bold; color:var(--success); margin-top:15px;">Staff အကောင့် (ဝန်ထမ်း)</p>
+    <p style="font-weight:bold; color:var(--success)">Staff (ဝန်ထမ်း)</p>
     <input type="text" id="setStaffUser" placeholder="Staff Username">
     <input type="text" id="setStaffPass" placeholder="Staff Password">
-    
-    <button onclick="updateSettings()" style="width:100%; padding:18px; border-radius:18px; border:none; background:var(--dark); color:white; font-weight:bold;">အပြောင်းအလဲများ သိမ်းမည်</button>
+    <button onclick="updateSettings()" style="width:100%; padding:18px; border-radius:18px; border:none; background:var(--dark); color:white; font-weight:bold;">သိမ်းမည်</button>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, updateDoc, doc, deleteDoc, onSnapshot, enableIndexedDbPersistence, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, updateDoc, doc, deleteDoc, onSnapshot, enableIndexedDbPersistence, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAo0NxlLIUtWzIJJx8Ein5Ftidacw0W9Lw",
@@ -128,161 +140,116 @@
     const fsDb = getFirestore(app);
     enableIndexedDbPersistence(fsDb).catch(() => {});
 
-    let db = [], cart = [], curF = 'အားလုံး', editIdx = -1;
-    let currentUserRole = ""; 
-
-    // Default accounts (if not in cloud)
+    let db = [], cart = [], curF = 'အားလုံး', curImg = "", editIdx = -1, currentUserRole = "";
+    let cats = JSON.parse(localStorage.getItem('my_cats')) || ['စားသောက်ကုန်', 'အလှကုန်'];
     let accounts = { adminU: "admin", adminP: "123", staffU: "staff", staffP: "456" };
 
-    // Sync Accounts
-    onSnapshot(doc(fsDb, "settings", "accounts"), (snap) => {
-        if(snap.exists()) {
-            accounts = snap.data();
-            document.getElementById('setAdminUser').value = accounts.adminU;
-            document.getElementById('setAdminPass').value = accounts.adminP;
-            document.getElementById('setStaffUser').value = accounts.staffU;
-            document.getElementById('setStaffPass').value = accounts.staffP;
-        }
-    });
-
-    // Sync Products
-    onSnapshot(collection(fsDb, "products"), (snap) => {
-        db = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        render();
-    });
+    // Sync Accounts & Products
+    onSnapshot(doc(fsDb, "settings", "accounts"), (snap) => { if(snap.exists()) accounts = snap.data(); });
+    onSnapshot(collection(fsDb, "products"), (snap) => { db = snap.docs.map(d => ({ id: d.id, ...d.data() })); render(); });
 
     window.login = () => {
-        let u = document.getElementById('loginUser').value;
-        let p = document.getElementById('loginPass').value;
-        if(u === accounts.adminU && p === accounts.adminP) {
-            currentUserRole = "admin"; enterApp();
-        } else if(u === accounts.staffU && p === accounts.staffP) {
-            currentUserRole = "staff"; enterApp();
-        } else {
-            alert("Username သို့မဟုတ် Password မှားနေပါသည်!");
-        }
+        let u = document.getElementById('loginUser').value, p = document.getElementById('loginPass').value;
+        if(u === accounts.adminU && p === accounts.adminP) { currentUserRole = "admin"; startApp(); }
+        else if(u === accounts.staffU && p === accounts.staffP) { currentUserRole = "staff"; startApp(); }
+        else alert("မှားနေပါသည်");
     };
 
-    function enterApp() {
+    function startApp() {
         document.getElementById('loginScreen').style.display = "none";
         document.getElementById('appMain').style.display = "block";
         if(currentUserRole === "admin") {
-            document.querySelectorAll('.admin-only').forEach(el => el.style.display = "flex");
+            document.getElementById('fabAdd').style.display = "flex";
+            document.getElementById('profitDiv').style.display = "block";
         }
-        showToast("မင်္ဂလာပါ " + currentUserRole);
     }
 
-    window.logout = () => { location.reload(); };
+    window.logout = () => location.reload();
 
     window.updateSettings = async () => {
-        if(currentUserRole !== "admin") return alert("Admin သာ ပြင်ဆင်ခွင့်ရှိသည်");
-        let newAcc = {
-            adminU: document.getElementById('setAdminUser').value,
-            adminP: document.getElementById('setAdminPass').value,
-            staffU: document.getElementById('setStaffUser').value,
-            staffP: document.getElementById('setStaffPass').value
-        };
-        await setDoc(doc(fsDb, "settings", "accounts"), newAcc);
-        showToast("Account များ ပြင်ဆင်ပြီးပါပြီ");
-        closeAll();
+        if(currentUserRole !== "admin") return alert("Admin သာ ပြင်နိုင်သည်");
+        accounts = { adminU: document.getElementById('setAdminUser').value, adminP: document.getElementById('setAdminPass').value, staffU: document.getElementById('setStaffUser').value, staffP: document.getElementById('setStaffPass').value };
+        await setDoc(doc(fsDb, "settings", "accounts"), accounts);
+        showToast("သိမ်းပြီးပါပြီ"); closeAll();
     };
 
-    // --- POS Functions ---
-    window.showToast = (msg) => { let t = document.getElementById('toast'); t.innerText = msg; t.style.display = 'block'; setTimeout(() => { t.style.display = 'none'; }, 2500); };
+    window.showToast = (msg) => { let t = document.getElementById('toast'); t.innerText = msg; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2500); };
     window.toggleSheet = (id) => { document.getElementById(id).classList.toggle('show'); document.getElementById('overlay').style.display = document.getElementById(id).classList.contains('show') ? 'block' : 'none'; };
     window.closeAll = () => { document.querySelectorAll('.sheet').forEach(s => s.classList.remove('show')); document.getElementById('overlay').style.display = 'none'; reset(); };
 
     window.openQty = (i, type) => {
-        let p = db[i];
-        document.getElementById('qtyIdx').value = i;
-        document.getElementById('qtyType').value = type;
+        let p = db[i]; document.getElementById('qtyIdx').value = i; document.getElementById('qtyType').value = type;
         document.getElementById('qtyTitle').innerText = p.name;
-        document.getElementById('qtySub').innerText = (type === 'အိတ်' ? 'ဘယ်နှစ်ထုတ်' : 'ဘယ်နှစ်ခု') + " ရောင်းမလဲ?";
         document.getElementById('qtyStockRem').innerText = "လက်ကျန်: " + p.st.toFixed(2);
-        document.getElementById('qtyInput').value = "";
         toggleSheet('qtySheet');
     };
 
     window.confirmAddToCart = () => {
-        let i = document.getElementById('qtyIdx').value;
-        let t = document.getElementById('qtyType').value;
-        let q = parseFloat(document.getElementById('qtyInput').value) || 0;
-        if(q <= 0) return;
-        let p = db[i];
-        let packsToRemove = (t === 'အိတ်') ? q : (q / p.ps);
-        if(packsToRemove > p.st + 0.0001) return alert("လက်ကျန်မလောက်ပါ");
-        cart.push({ docId: p.id, n: p.name, q, t: (t==='အိတ်'?'ထုတ်':'ခု'), packsToRemove, tot: q * (t==='အိတ်'?p.bp:p.up) });
+        let i = document.getElementById('qtyIdx').value, t = document.getElementById('qtyType').value, q = parseFloat(document.getElementById('qtyInput').value) || 0;
+        let p = db[i], packs = (t==='အိတ်'?q:q/p.ps);
+        if(packs > p.st + 0.001) return alert("လက်ကျန်မရှိပါ");
+        let price = (t==='အိတ်'?p.bp:p.up), profit = (t==='အိတ်'? q*(p.bp-p.cp) : q*((p.bp-p.cp)/p.ps));
+        cart.push({ docId: p.id, n: p.name, q, t: (t==='အိတ်'?'ထုတ်':'ခု'), packsToRemove: packs, tot: q*price, profit });
         updateCart(); closeAll();
     };
 
     window.checkout = async () => {
-        if(!cart.length) return;
-        document.getElementById('checkoutBtn').disabled = true;
+        if(!cart.length) return; document.getElementById('checkoutBtn').disabled = true;
         for(let item of cart) {
             let p = db.find(x => x.id === item.docId);
             await updateDoc(doc(fsDb, "products", item.docId), { st: p.st - item.packsToRemove });
         }
-        cart = []; updateCart(); closeAll(); showToast("ရောင်းချမှု အောင်မြင်ပါသည်");
+        cart = []; updateCart(); closeAll(); showToast("ရောင်းပြီးပါပြီ");
         document.getElementById('checkoutBtn').disabled = false;
     };
 
     window.save = async () => {
-        let n = document.getElementById('p_name').value.trim();
-        if(!n) return;
+        let n = document.getElementById('p_name').value.trim(); if(!n) return;
         document.getElementById('saveBtn').disabled = true;
-        let d = calc();
-        let item = { name: n, cat: document.getElementById('p_cat').value, ...d, st: parseFloat(document.getElementById('p_st').value) || 0 };
+        let d = calc(), item = { name: n, cat: document.getElementById('p_cat').value, ...d, img: curImg, st: parseFloat(document.getElementById('p_st').value)||0 };
         if(editIdx > -1) await updateDoc(doc(fsDb, "products", db[editIdx].id), item);
         else await addDoc(collection(fsDb, "products"), item);
-        closeAll();
-        document.getElementById('saveBtn').disabled = false;
+        closeAll(); document.getElementById('saveBtn').disabled = false;
     };
 
     window.del = async (id) => { if(confirm("ဖျက်မှာလား?")) await deleteDoc(doc(fsDb, "products", id)); };
+    window.loadImg = (i) => { if(i.files[0]) { let r = new FileReader(); r.onload = e => { curImg = e.target.result; document.getElementById('imgPre').src = curImg; document.getElementById('imgPre').style.display="block"; document.getElementById('imgTxt').style.display="none"; }; r.readAsDataURL(i.files[0]); } };
 
-    window.calc = () => { 
-        let cp = parseFloat(document.getElementById('p_cp').value) || 0; 
-        let pp = parseFloat(document.getElementById('p_pp').value) || 0; 
-        let ps = parseFloat(document.getElementById('p_ps').value) || 1; 
-        let bp = Math.round(cp + (cp * pp / 100)); 
-        let up = Math.round(bp / ps); 
-        document.getElementById('v_bp').innerText = bp.toLocaleString(); 
-        document.getElementById('v_up').innerText = up.toLocaleString(); 
-        return { bp, up, cp, pp, ps }; 
+    window.calc = () => {
+        let cp = parseFloat(document.getElementById('p_cp').value)||0, pp = parseFloat(document.getElementById('p_pp').value)||0, ps = parseFloat(document.getElementById('p_ps').value)||1;
+        let bp = Math.round(cp + (cp * pp / 100)), up = Math.round(bp / ps);
+        document.getElementById('v_bp').innerText = bp; document.getElementById('v_up').innerText = up;
+        return { bp, up, cp, pp, ps };
     };
 
     window.render = () => {
-        let g = document.getElementById('productGrid'), inv = document.getElementById('invList'), f = document.getElementById('filterList');
+        let g = document.getElementById('productGrid'), f = document.getElementById('filterList'), inv = document.getElementById('invList');
         g.innerHTML = ''; f.innerHTML = `<button class="filter-btn ${curF==='အားလုံး'?'active':''}" onclick="setF('အားလုံး')">အားလုံး</button>`;
-        let catsArr = [...new Set(db.map(p => p.cat))];
-        catsArr.forEach(c => f.innerHTML += `<button class="filter-btn ${curF===c?'active':''}" onclick="setF('${c}')">${c}</button>`);
+        cats.forEach(c => f.innerHTML += `<button class="filter-btn ${curF===c?'active':''}" onclick="setF('${c}')">${c}</button>`);
         inv.innerHTML = '<h4>ပစ္စည်းစာရင်း</h4>';
         db.forEach((p, i) => {
             if(curF === 'အားလုံး' || p.cat === curF) {
-                let isOut = p.st <= 0;
-                g.innerHTML += `<div class="card">${isOut?'<div style="color:red; font-size:10px; font-weight:bold;">ကုန်နေသည်</div>':''}<div style="font-weight:bold; font-size:12px;">${p.name}</div><div style="display:flex; gap:4px; margin:5px 0;"><span class="price-tag">ထုတ်: ${p.bp}</span><span class="price-tag">ခု: ${p.up}</span></div><span class="info-tag">လက်ကျန်: ${p.st.toFixed(2)}</span><div style="display:flex; gap:5px;"><button class="btn-buy" style="background:var(--primary)" onclick="openQty(${i},'အိတ်')" ${isOut?'disabled':''}>ထုတ်</button><button class="btn-buy" style="background:var(--success)" onclick="openQty(${i},'ခု')" ${isOut?'disabled' : ''}>ခု</button></div></div>`;
+                let isOut = p.st <= 0.001;
+                g.innerHTML += `<div class="card">${isOut?'<div class="out-of-stock-overlay">ကုန်နေသည်</div>':''}<img src="${p.img||'https://via.placeholder.com/150'}"><div style="font-weight:bold; font-size:12px; margin:8px 0;">${p.name}</div><div style="display:flex; gap:4px; margin-bottom:5px;"><span class="price-tag">ထုတ်: ${p.bp}</span><span class="price-tag">ခု: ${p.up}</span></div><span class="info-tag">လက်ကျန်: ${p.st.toFixed(2)}</span><div style="display:flex; gap:5px;"><button class="btn-buy" style="background:var(--primary)" onclick="openQty(${i},'အိတ်')" ${isOut?'disabled':''}>ထုတ်</button><button class="btn-buy" style="background:var(--success)" onclick="openQty(${i},'ခု')" ${isOut?'disabled':''}>ခု</button></div></div>`;
             }
-            if(currentUserRole === "admin") {
-                inv.innerHTML += `<div class="inv-item"><span><b>${p.name}</b> (${p.st.toFixed(2)})</span><div><button onclick="editItem(${i})">ပြင်</button><button onclick="del('${p.id}')" style="color:red">ဖျက်</button></div></div>`;
-            }
+            if(currentUserRole === "admin") inv.innerHTML += `<div class="inv-item"><span><b>${p.name}</b> (${p.st.toFixed(2)})</span><div><button onclick="editItem(${i})">ပြင်</button><button onclick="del('${p.id}')" style="color:red">ဖျက်</button></div></div>`;
         });
     };
 
     window.updateCart = () => {
-        let total = 0;
-        document.getElementById('cartList').innerHTML = cart.map((it, idx) => {
-            total += it.tot;
-            return `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eee;"><span>${it.n} (${it.q} ${it.t})</span><span>${it.tot} K <button onclick="removeFromCart(${idx})" style="color:red">&times;</button></span></div>`;
-        }).join('');
+        let total = 0, profit = 0;
+        document.getElementById('cartList').innerHTML = cart.map((it, idx) => { total += it.tot; profit += it.profit; return `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eee;"><span>${it.n} (${it.q}${it.t})</span><span>${it.tot} K <button onclick="removeFromCart(${idx})" style="color:red">&times;</button></span></div>`; }).join('');
         document.getElementById('totalTxt').innerText = total.toLocaleString();
+        document.getElementById('totalProfitTxt').innerText = Math.round(profit).toLocaleString();
         document.getElementById('cartCount').innerText = cart.length;
     };
 
-    window.editItem = (i) => { editIdx = i; let p = db[i]; document.getElementById('p_name').value = p.name; document.getElementById('p_cp').value = p.cp; document.getElementById('p_st').value = p.st; toggleSheet('managerModal'); };
-    window.removeFromCart = (idx) => { cart.splice(idx, 1); updateCart(); };
+    window.editItem = (i) => { editIdx = i; let p = db[i]; document.getElementById('p_name').value = p.name; document.getElementById('p_cp').value = p.cp; document.getElementById('p_pp').value = p.pp; document.getElementById('p_ps').value = p.ps; document.getElementById('p_st').value = p.st; curImg = p.img; calc(); toggleSheet('managerModal'); };
+    window.removeFromCart = (i) => { cart.splice(i, 1); updateCart(); };
     window.setF = (c) => { curF = c; render(); };
-    window.reset = () => { editIdx = -1; document.getElementById('p_name').value=""; document.getElementById('p_st').value="0"; };
-    window.openManager = () => { document.getElementById('p_cat').innerHTML = ['စားသောက်ကုန်','အလှကုန်','အထွေထွေ'].map(c => `<option value="${c}">${c}</option>`).join(''); toggleSheet('managerModal'); };
+    window.reset = () => { editIdx = -1; curImg = ""; document.getElementById('p_name').value = ""; document.getElementById('imgPre').style.display = "none"; document.getElementById('imgTxt').style.display = "block"; };
+    window.openManager = () => { document.getElementById('p_cat').innerHTML = cats.map(c => `<option value="${c}">${c}</option>`).join(''); toggleSheet('managerModal'); };
+    window.addNewCat = () => { let v = document.getElementById('new_cat_input').value.trim(); if(v && !cats.includes(v)) { cats.push(v); localStorage.setItem('my_cats', JSON.stringify(cats)); openManager(); } };
 </script>
 </body>
 </html>
