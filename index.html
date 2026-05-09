@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ကိုယ်ပိုင် ကုန်စုံဆိုင် - Cloud POS</title>
+    <title>ကိုယ်ပိုင် ကုန်စုံဆိုင် - Cloud & Offline POS</title>
     <style>
         :root { --primary: #6366f1; --success: #10b981; --danger: #ef4444; --dark: #0f172a; --bg: #f4f7fe; }
         body { font-family: sans-serif; background: var(--bg); margin: 0; padding-bottom: 80px; color: var(--dark); -webkit-tap-highlight-color: transparent; }
@@ -106,7 +106,16 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, updateDoc, doc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { 
+        getFirestore, 
+        collection, 
+        addDoc, 
+        updateDoc, 
+        doc, 
+        deleteDoc, 
+        onSnapshot, 
+        enableIndexedDbPersistence 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     // --- Firebase Configuration ---
     const firebaseConfig = {
@@ -122,11 +131,21 @@
 
     const app = initializeApp(firebaseConfig);
     const fsDb = getFirestore(app);
+
+    // --- Enable Offline Persistence ---
+    enableIndexedDbPersistence(fsDb).catch((err) => {
+        if (err.code == 'failed-precondition') {
+            console.warn("Multiple tabs open, persistence can only be enabled in one tab at a time.");
+        } else if (err.code == 'unimplemented-platform') {
+            console.warn("The current browser does not support all of the features required to enable persistence.");
+        }
+    });
+
     const colRef = collection(fsDb, "products");
 
-    // Check Connection
+    // Connection Toast
     if (app) {
-        setTimeout(() => showToast("✅ Firebase Cloud နှင့် ချိတ်ဆက်မိပါပြီ"), 1000);
+        setTimeout(() => showToast("✅ Firebase Cloud & Offline Sync အဆင်သင့်ဖြစ်ပါပြီ"), 1000);
     }
 
     let db = [];
@@ -134,13 +153,13 @@
     let cart = [];
     let curF = 'အားလုံး', curImg = "", editIdx = -1;
 
-    // Real-time Sync
+    // Real-time Sync (Works offline too)
     onSnapshot(colRef, (snapshot) => {
         db = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         render();
     });
 
-    // Window Globals for HTML clicks
+    // Window Globals
     window.showToast = (msg) => { let t = document.getElementById('toast'); t.innerText = msg; t.style.display = 'block'; setTimeout(() => { t.style.display = 'none'; }, 2500); };
     window.toggleSheet = (id) => { document.getElementById(id).classList.toggle('show'); document.getElementById('overlay').style.display = document.getElementById(id).classList.contains('show') ? 'block' : 'none'; };
     window.closeAll = () => { document.querySelectorAll('.sheet').forEach(s => s.classList.remove('show')); document.getElementById('overlay').style.display = 'none'; reset(); };
@@ -173,11 +192,15 @@
     window.checkout = async () => {
         if(cart.length === 0) return;
         document.getElementById('checkoutBtn').disabled = true;
-        for(let item of cart) {
-            let p = db.find(x => x.id === item.docId);
-            await updateDoc(doc(fsDb, "products", item.docId), { st: p.st - item.packsToRemove });
+        try {
+            for(let item of cart) {
+                let p = db.find(x => x.id === item.docId);
+                await updateDoc(doc(fsDb, "products", item.docId), { st: p.st - item.packsToRemove });
+            }
+            cart = []; updateCart(); closeAll(); showToast("✅ ရောင်းချမှု အောင်မြင်ပါသည်။ (Offline သိမ်းဆည်းပြီး)");
+        } catch(e) {
+            showToast("❌ အမှားအယွင်းရှိပါသည်");
         }
-        cart = []; updateCart(); closeAll(); showToast("✅ ရောင်းချမှု အောင်မြင်ပါသည်။");
         document.getElementById('checkoutBtn').disabled = false;
     };
 
@@ -187,9 +210,13 @@
         document.getElementById('saveBtn').disabled = true;
         let d = calc();
         let item = { name: n, cat: document.getElementById('p_cat').value, exp: document.getElementById('p_exp').value, ...d, img: curImg, st: parseFloat(document.getElementById('p_st').value) || 0 };
-        if(editIdx > -1) await updateDoc(doc(fsDb, "products", db[editIdx].id), item);
-        else await addDoc(colRef, item);
-        closeAll(); showToast("သိမ်းပြီးပါပြီ");
+        try {
+            if(editIdx > -1) await updateDoc(doc(fsDb, "products", db[editIdx].id), item);
+            else await addDoc(colRef, item);
+            closeAll(); showToast("သိမ်းပြီးပါပြီ (Cloud/Offline Sync)");
+        } catch(e) {
+            showToast("❌ သိမ်းဆည်းရန် အခက်အခဲရှိသည်");
+        }
         document.getElementById('saveBtn').disabled = false;
     };
 
