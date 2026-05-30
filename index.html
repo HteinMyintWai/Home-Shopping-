@@ -28,6 +28,10 @@
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
         .inv-item { background: #fff; padding: 15px; border-radius: 18px; margin-bottom: 12px; border: 1px solid #eee; }
+        
+        /* မျက်လုံးခလုတ်အတွက် CSS ပုံစံသစ် */
+        .pass-container { position: relative; width: 100%; }
+        .eye-btn { position: absolute; right: 15px; top: 16px; border: none; background: none; cursor: pointer; font-size: 18px; color: #64748b; padding: 0; }
     </style>
 </head>
 <body>
@@ -38,7 +42,12 @@
     <div style="width:85%; max-width:350px; text-align:center;">
         <h2 style="font-size:24px; margin-bottom: 20px;">ဆိုင်ပစ္စည်းစီမံခန့်ခွဲမှု</h2>
         <input type="text" id="l_u" placeholder="အသုံးပြုသူအမည်">
-        <input type="password" id="l_p" placeholder="စကားဝှက်">
+        
+        <div class="pass-container">
+            <input type="password" id="l_p" placeholder="စကားဝှက်" style="padding-right: 45px;">
+            <button type="button" class="eye-btn" onclick="togglePassword('l_p', this)">👁️</button>
+        </div>
+        
         <button onclick="doLogin()" class="btn-main">ဝင်မည်</button>
     </div>
 </div>
@@ -92,10 +101,18 @@
 
 <div id="settingSheet" class="sheet">
     <h3>⚙️ POS Settings</h3>
+    <small>Admin အကောင့်</small>
     <input type="text" id="s_au" placeholder="Admin Username">
-    <input type="password" id="s_ap" placeholder="Admin Password">
+    <div class="pass-container">
+        <input type="password" id="s_ap" placeholder="Admin Password" style="padding-right: 45px;">
+        <button type="button" class="eye-btn" onclick="togglePassword('s_ap', this)">👁️</button>
+    </div>
+    <small>Staff အကောင့်</small>
     <input type="text" id="s_su" placeholder="Staff Username">
-    <input type="password" id="s_sp" placeholder="Staff Password">
+    <div class="pass-container">
+        <input type="password" id="s_sp" placeholder="Staff Password" style="padding-right: 45px;">
+        <button type="button" class="eye-btn" onclick="togglePassword('s_sp', this)">👁️</button>
+    </div>
     <button class="btn-main" onclick="saveSets()">သိမ်းမည်</button>
 </div>
 
@@ -113,12 +130,10 @@
     <small>အရေအတွက်</small>
     <input type="number" id="sqty" value="1" min="0.1" step="0.1" oninput="calcSale()">
     
-    <!-- Error Message -->
     <div id="stockMsg" class="stock-error">⚠️ လက်ကျန်ထက် ပိုရောင်း၍မရပါ။</div>
     
     <div class="price-box">ကျသင့်ငွေ: <b id="stotal">0</b> K</div>
     
-    <!-- Add Button that disables if stock is low -->
     <button id="addBtn" class="btn-main" onclick="addToCart()">ဈေးခြင်းထဲထည့်မည်</button>
 </div>
 
@@ -140,6 +155,18 @@
     let db = [], cart = [], editId = null, role = "", imgB64 = "";
     let accs = JSON.parse(localStorage.getItem('pos_accs')) || { au:"admin", ap:"123", su:"staff", sp:"123", def_pp: 10, def_upp: 20 };
     let cats = JSON.parse(localStorage.getItem('pos_cats')) || ["အလှကုန်", "စားသောက်ကုန်"];
+
+    // --- PASSWORD မျက်လုံး ဖွင့်/ပိတ် FUNCTION ---
+    window.togglePassword = (inputId, btn) => {
+        let input = document.getElementById(inputId);
+        if (input.type === "password") {
+            input.type = "text";
+            btn.innerText = "👁️‍🗨️"; // မျက်လုံးပွင့်သွားသည့်ပုံစံပြောင်းရန်
+        } else {
+            input.type = "password";
+            btn.innerText = "👁️";
+        }
+    };
 
     function showToast(msg) {
         let t = document.getElementById("toast");
@@ -198,7 +225,6 @@
         let price = (u === 'p' ? curP.bp : curP.up);
         let deductNeeded = (u === 'p' ? q : q / curP.ps);
         
-        // --- STOCK VALIDATION LOGIC ---
         if (deductNeeded > curP.st) {
             document.getElementById('stockMsg').style.display = 'block';
             document.getElementById('addBtn').disabled = true;
@@ -240,6 +266,20 @@
         cart = []; updateCart(); closeAll(); showToast("ရောင်းချပြီးပါပြီ 💰");
     };
 
+    window.saveSets = () => {
+        let au = document.getElementById('s_au').value || accs.au;
+        let ap = document.getElementById('s_ap').value || accs.ap;
+        let su = document.getElementById('s_su').value || accs.su;
+        let sp = document.getElementById('s_sp').value || accs.sp;
+
+        accs = { ...accs, au, ap, su, sp };
+        localStorage.setItem('pos_accs', JSON.stringify(accs));
+
+        showToast("Settings နှင့် Password များကို သိမ်းဆည်းပြီးပါပြီ ⚙️✅");
+        closeAll();
+        setTimeout(() => { location.reload(); }, 1000);
+    };
+
     window.handleImg = (i) => { if(i.files[0]) { let r = new FileReader(); r.onload=(e)=>{ imgB64=e.target.result; document.getElementById('preImg').src=imgB64; document.getElementById('preImg').style.display='block'; document.getElementById('upText').style.display='none'; }; r.readAsDataURL(i.files[0]); } };
     let filterCat = "အားလုံး";
     window.setFilter = (c) => { filterCat = c; render(); };
@@ -253,6 +293,11 @@
         if(role === "admin") {
             document.getElementById('invList').innerHTML = db.map(p => `<div class="inv-item"><b>${p.name}</b><br><small>ရင်း: ${p.cp} | ကျန်: ${p.st.toFixed(2)}</small><div style="margin-top:5px;"><button onclick="editP('${p.id}')">ပြင်</button> <button onclick="delP('${p.id}')" style="color:red;">ဖျက်</button></div></div>`).join('');
         }
+
+        document.getElementById('s_au').value = accs.au;
+        document.getElementById('s_ap').value = accs.ap;
+        document.getElementById('s_su').value = accs.su;
+        document.getElementById('s_sp').value = accs.sp;
     }
 
     window.editP = (id) => { 
