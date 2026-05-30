@@ -147,19 +147,19 @@
         }
         .fab-btn:active { transform: scale(0.9); }
         
-        /* 🍔 ဟန်ဘာကာ ဓာတ်ပုံစစ်စစ် Logout ခလုတ်ဒီဇိုင်း */
+        /* 🍔 ဟန်ဘာကာ ဓာတ်ပုံစစ်စစ် (တစ်သက်လုံးပုံမကျိုးမည့် SVG/Base64 အကြည်ဒီဇိုင်း) */
         .burger-logout-btn {
             pointer-events: auto; 
-            width: 58px; 
-            height: 58px; 
+            width: 55px; 
+            height: 55px; 
             border-radius: 50%; 
             cursor: pointer; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15); 
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            border: 2px solid var(--primary); 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2); 
+            transition: all 0.2s ease; 
+            border: 1.5px solid var(--primary); 
             outline: none; 
             background: #ffffff;
             padding: 0;
@@ -167,17 +167,17 @@
         }
         
         .burger-logout-btn:hover {
-            transform: scale(1.1) rotate(5deg);
+            transform: scale(1.1);
             border-color: #ffaa00;
         }
         .burger-logout-btn:active { 
-            transform: scale(0.95); 
+            transform: scale(0.9); 
         }
         
         .burger-img { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
+            width: 85%; 
+            height: 85%; 
+            object-fit: contain; 
         }
 
         /* 👑 နှုတ်ခွန်းဆက်စာ Pop-up အလှစနစ် (Goodbye Modal) */
@@ -224,8 +224,8 @@
 
 <div id="goodbyeScreen" class="goodbye-screen">
     <div class="goodbye-card">
-        <img src="https://i.ibb.co/3mYmG3n/burger-transparent.png" alt="Burger" style="width: 80px; height: 80px; object-fit: contain; margin: 0 auto;">
-        <h3>တာ့တာ... သွားပြီနော် 🍔</h3>
+        <div style="font-size: 55px; margin-bottom: 10px; animation: bounce 1s infinite alternate;">🍔</div>
+        <h3>တာ့တာ... သွားပြီနော်</h3>
         <p>မင်္ဂလာရှိသောနေ့လေး ဖြစ်ပါစေရှင်...<br>နောက်လည်း ပြန်လာခဲ့ဖို့ မျှော်လင့်ပါတယ်နော်။</p>
         <div class="loader-bar">
             <div class="loader-progress"></div>
@@ -262,7 +262,7 @@
         </button>
         
         <button id="logoutBtn" class="burger-logout-btn" onclick="doLogout()" title="Logout ပြန်ထွက်မည်">
-            <img src="https://i.ibb.co/3mYmG3n/burger-transparent.png" alt="Burger Logout" class="burger-img">
+            <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='%23f4a261' d='M464 256c0-60-40-112-96-125V96c0-17.7-14.3-32-32-32H176c-17.7 0-32 14.3-32 32v35c-56 13-96 65-96 125v16h416v-16z'/><path fill='%23e76f51' d='M32 288h448v32H32z'/><path fill='%232a9d8f' d='M48 336c10 0 20 8 20 18s10 18 20 18 20-8 20-18 10-18 20-18 20 8 20 18 10 18 20 18 20-8 20-18 10-18 20-18 20 8 20 18 10 18 20 18 20-8 20-18 10-18 20-18 20 8 20 18 10 18 20 18 20-8 20-18 10-18 20-18s20 8 20 18-10 18-20 18H48z'/><path fill='%23e9c46a' d='M32 384h448v16c0 26.5-21.5 48-48 48H82c-26.5 0-48-21.5-48-48v-16z'/><circle cx='200' cy='120' r='6' fill='%23fff'/><circle cx='280' cy='110' r='6' fill='%23fff'/><circle cx='340' cy='150' r='6' fill='%23fff'/><circle cx='150' cy='160' r='6' fill='%23fff'/><circle cx='240' cy='170' r='6' fill='%23fff'/></svg>" alt="Burger Logout" class="burger-img">
         </button>
     </div>
 </div>
@@ -426,7 +426,7 @@
                 document.getElementById('goodbyeScreen').style.display = "none"; // နှုတ်ဆက်စာ ပိတ်မည်
                 document.getElementById('loginScreen').style.display = "flex";
                 showToast("အကောင့်မှ ထွက်ပြီးပါပြီ 🚪");
-            }, 3000); // ၃ စက္ကန့် စောင့်မည်
+            }, 3000); 
         }
     };
 
@@ -486,78 +486,4 @@
         let u = document.getElementById('sunit').value, q = parseFloat(document.getElementById('sqty').value);
         let price = (u === 'p' ? curP.bp : curP.up);
         cart.push({ id:curP.id, name:curP.name, qty:q, unit:(u==='p'?'အိတ်':'ထုပ်'), total:q*price, deduct:(u==='p'?q:q/curP.ps) });
-        updateCart(); closeAll(); showToast("ဈေးခြင်းထဲထည့်ပြီး 🛒");
-    };
-
-    function updateCart() {
-        let t = 0; document.getElementById('cartCount').innerText = cart.length;
-        document.getElementById('citems').innerHTML = cart.map((i, idx) => {
-            t += i.total;
-            return `<div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #eee; align-items:center;">
-                <span>${i.name} (${i.qty} ${i.unit})</span>
-                <b style="color:var(--dark);">${i.total.toLocaleString()} K <span onclick="cart.splice(${idx},1);updateCart()" style="color:var(--danger); margin-left:15px; font-size:20px; cursor:pointer;">×</span></b>
-            </div>`;
-        }).join('');
-        document.getElementById('ctotal').innerText = t.toLocaleString();
-    }
-
-    window.checkout = async () => {
-        if(cart.length === 0) return;
-        for(let i of cart) {
-            let pRef = doc(fs, "products", i.id);
-            let pSnap = await getDoc(pRef);
-            if(pSnap.exists()) await updateDoc(pRef, { st: pSnap.data().st - i.deduct });
-        }
-        cart = []; updateCart(); closeAll(); showToast("ရောင်းချပြီးပါပြီ 💰");
-    };
-
-    window.saveSets = () => {
-        let au = document.getElementById('s_au').value || accs.au;
-        let ap = document.getElementById('s_ap').value || accs.ap;
-        let su = document.getElementById('s_su').value || accs.su;
-        let sp = document.getElementById('s_sp').value || accs.sp;
-
-        accs = { ...accs, au, ap, su, sp };
-        localStorage.setItem('pos_accs', JSON.stringify(accs));
-
-        showToast("Settings နှင့် Password များကို သိမ်းဆည်းပြီးပါပြီ ⚙️✅");
-        closeAll();
-        setTimeout(() => { location.reload(); }, 1000);
-    };
-
-    window.handleImg = (i) => { if(i.files[0]) { let r = new FileReader(); r.onload=(e)=>{ imgB64=e.target.result; document.getElementById('preImg').src=imgB64; document.getElementById('preImg').style.display='block'; document.getElementById('upText').style.display='none'; }; r.readAsDataURL(i.files[0]); } };
-    let filterCat = "အားလုံး";
-    window.setFilter = (c) => { filterCat = c; render(); };
-
-    function render() {
-        if(!role) return;
-        document.getElementById('p_c').innerHTML = cats.map(c => `<option value="${c}">${c}</option>`).join('');
-        document.getElementById('catFilter').innerHTML = ["အားလုံး", ...cats].map(c => `<button onclick="setFilter('${c}')" style="padding:10px 16px; border-radius:14px; border:1.5px solid ${filterCat===c?'var(--primary)':'#e2e8f0'}; background:${filterCat===c?'var(--dark)':'white'}; color:${filterCat===c?'white':'var(--dark)'}; margin-right:8px; font-weight:bold; white-space:nowrap; cursor:pointer;">${c}</button>`).join('');
-        let f = filterCat === "အားလုံး" ? db : db.filter(x => x.cat === filterCat);
-        document.getElementById('pGrid').innerHTML = f.map(p => `<div class="card"><img src="${p.img || 'https://via.placeholder.com/150'}"><b>${p.name}</b><small>${p.st.toFixed(2)} အိတ်ကျန်</small><button class="btn-sell" onclick="openSale('${p.id}')">ရောင်းမည်</button></div>`).join('');
-        if(role === "admin") {
-            document.getElementById('invList').innerHTML = db.map(p => `<div class="inv-item"><b>${p.name}</b><br><small>ရင်း: ${p.cp} | ကျန်: ${p.st.toFixed(2)}</small><div style="margin-top:8px;"><button onclick="editP('${p.id}')" style="background:var(--dark); color:white; border:none; padding:5px 12px; border-radius:8px;">ပြင်</button> <button onclick="delP('${p.id}')" style="color:var(--danger); background:none; border:none; margin-left:10px; font-weight:bold;">ဖျက်</button></div></div>`).join('');
-        }
-
-        document.getElementById('s_au').value = accs.au;
-        document.getElementById('s_ap').value = accs.ap;
-        document.getElementById('s_su').value = accs.su;
-        document.getElementById('s_sp').value = accs.sp;
-    }
-
-    window.editP = (id) => { 
-        let p = db.find(x => x.id === id); editId = id; 
-        document.getElementById('p_n').value = p.name; document.getElementById('p_c').value = p.cat;
-        document.getElementById('p_cp').value = p.cp; document.getElementById('p_pp').value = p.pp;
-        document.getElementById('p_ps').value = p.ps; document.getElementById('p_upp').value = p.upp;
-        document.getElementById('p_st').value = p.st; document.getElementById('p_exp').value = p.exp;
-        imgB64 = p.img || ""; if(imgB64) { document.getElementById('preImg').src = imgB64; document.getElementById('preImg').style.display = 'block'; document.getElementById('upText').style.display = 'none'; }
-        document.getElementById('cancelEdit').style.display = "block"; mCalc(); 
-    };
-    window.delP = async (id) => { if(confirm("ဖျက်မှာလား?")) await deleteDoc(doc(fs, "products", id)); };
-    window.resetForm = () => { editId = null; imgB64 = ""; document.getElementById('p_n').value = ""; document.getElementById('preImg').style.display = 'none'; document.getElementById('upText').style.display = 'block'; document.getElementById('cancelEdit').style.display = "none"; mCalc(); };
-    window.toggleSheet = (id) => { document.getElementById(id).classList.add('show'); document.getElementById('overlay').style.display='block'; };
-    window.closeAll = () => { document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('show')); document.getElementById('overlay').style.display='none'; };
-</script>
-</body>
-</html>
+        updateCart(); closeAll(); showToast
