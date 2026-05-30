@@ -5,49 +5,216 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ကုန်းစုံ POS - Hard Stock Control</title>
     <style>
-        :root { --primary: #6366f1; --success: #10b981; --danger: #ef4444; --warning: #f59e0b; --dark: #0f172a; --bg: #f4f7fe; }
-        body { font-family: sans-serif; background: var(--bg); margin: 0; padding-bottom: 80px; color: var(--dark); overflow-x: hidden; }
-        header { background: white; padding: 15px; text-align: center; box-shadow: 0 1px 5px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; font-weight: 900; font-size: 18px; }
-        .container { padding: 15px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
-        .img-upload { width: 100%; height: 140px; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 20px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; margin-bottom: 15px; cursor: pointer; }
-        .img-upload img { width: 100%; height: 100%; object-fit: cover; position: absolute; }
-        .sheet { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 2500; border-top-left-radius: 35px; border-top-right-radius: 35px; padding: 25px; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-sizing: border-box; max-height: 90vh; overflow-y: auto; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); }
-        .sheet.show { bottom: 0; }
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 2000; backdrop-filter: blur(4px); }
-        input, select { width: 100%; padding: 14px; border: 2px solid #f1f5f9; border-radius: 14px; font-size: 15px; margin-bottom: 12px; box-sizing: border-box; background: #f8fafc; outline: none; }
-        .btn-main { width: 100%; padding: 16px; border-radius: 16px; border: none; background: var(--primary); color: white; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; }
-        .btn-main:disabled { background: #cbd5e1 !important; cursor: not-allowed; }
-        .card { background: white; border-radius: 22px; padding: 12px; border: 1px solid #eef2f6; text-align: center; position: relative; }
-        .card img { width: 100%; height: 100px; object-fit: cover; border-radius: 15px; margin-bottom: 8px; }
-        .price-box { background: var(--dark); color: white; padding: 15px; border-radius: 15px; margin-bottom: 15px; font-size: 13px; line-height: 1.8; }
-        .profit-hint { font-size: 11px; color: var(--danger); font-weight: bold; display: block; margin-top: -8px; margin-bottom: 8px; margin-left: 5px; }
-        .stock-error { color: var(--danger); font-size: 13px; font-weight: bold; margin-bottom: 12px; display: none; text-align: center; background: #fee2e2; padding: 10px; border-radius: 10px; }
-        #toast { visibility: hidden; min-width: 200px; background-color: var(--dark); color: #fff; text-align: center; border-radius: 50px; padding: 12px; position: fixed; z-index: 10000; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
-        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
-        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
-        .inv-item { background: #fff; padding: 15px; border-radius: 18px; margin-bottom: 12px; border: 1px solid #eee; }
+        /* 🎨 Royal Navy & Luxury Gold Premium Palette */
+        :root { 
+            --primary: #c5a880; /* Gold */
+            --primary-dark: #b3936a;
+            --success: #10b981; 
+            --danger: #ef4444; 
+            --dark: #0d1b2a; /* Deep Navy */
+            --card-bg: #1b263b; /* Lighter Navy */
+            --bg: #f0f2f5; 
+            --text-gold: #e0c3fc;
+        }
         
-        /* မျက်လုံးခလုတ်အတွက် CSS ပုံစံသစ် */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--bg); 
+            margin: 0; 
+            padding-bottom: 90px; 
+            color: var(--dark); 
+            overflow-x: hidden; 
+        }
+        
+        /* 🏛️ Header Style */
+        header { 
+            background: var(--dark); 
+            color: white;
+            padding: 18px; 
+            text-align: center; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15); 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+            font-weight: bold; 
+            font-size: 20px; 
+            border-bottom: 2px solid var(--primary);
+            letter-spacing: 1px;
+        }
+
+        .container { padding: 15px; }
+        
+        /* 📱 Product Cards Grid */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 15px; }
+        
+        .card { 
+            background: white; 
+            border-radius: 24px; 
+            padding: 12px; 
+            border: 1px solid #e2e8f0; 
+            text-align: center; 
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            transition: transform 0.2s;
+        }
+        .card:active { transform: scale(0.97); }
+        .card img { width: 100%; height: 110px; object-fit: cover; border-radius: 18px; margin-bottom: 10px; }
+        .card b { font-size: 15px; color: var(--dark); display: block; margin-bottom: 4px; }
+        .card small { color: #64748b; font-size: 12px; }
+        
+        .card .btn-sell {
+            width: 100%; margin-top: 10px; background: var(--dark); color: white; border: 1.5px solid var(--primary); padding: 10px; border-radius: 14px; font-weight: bold; cursor: pointer; font-size: 13px;
+        }
+
+        /* 📸 Luxury Image Upload Box */
+        .img-upload { 
+            width: 120px; height: 120px; background: #fff; border: 2px solid var(--primary); border-radius: 24px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; margin: 0 auto 20px auto; cursor: pointer; box-shadow: 0 6px 15px rgba(197,168,128,0.2); 
+        }
+        .img-upload img { width: 100%; height: 100%; object-fit: cover; position: absolute; }
+        .img-upload span { font-size: 13px; color: var(--primary-dark); font-weight: bold; text-align: center; display: flex; flex-direction: column; gap: 4px; }
+
+        /* 🔼 Premium Sheets (Bottom Modals) */
+        .sheet { 
+            position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 2500; border-top-left-radius: 35px; border-top-right-radius: 35px; padding: 25px; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-sizing: border-box; max-height: 85vh; overflow-y: auto; box-shadow: 0 -15px 40px rgba(0,0,0,0.15); 
+        }
+        .sheet.show { bottom: 0; }
+        .sheet h3 { margin-top: 0; color: var(--dark); font-size: 18px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 18px; }
+        
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
+        
+        /* 📝 Styled Inputs & Forms */
+        input, select { width: 100%; padding: 14px; border: 1.5px solid #e2e8f0; border-radius: 16px; font-size: 15px; margin-bottom: 14px; box-sizing: border-box; background: #f8fafc; outline: none; transition: 0.2s; color: var(--dark); }
+        input:focus, select:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px rgba(197,168,128,0.15); }
+        small { font-weight: 600; color: #64748b; display: block; margin-bottom: 6px; margin-left: 4px; }
+
+        .btn-main { width: 100%; padding: 16px; border-radius: 18px; border: none; background: var(--dark); color: white; font-weight: bold; cursor: pointer; font-size: 16px; border: 1.5px solid var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .btn-main:disabled { background: #cbd5e1 !important; border-color: #cbd5e1; cursor: not-allowed; }
+        
+        .price-box { background: var(--dark); color: white; padding: 16px; border-radius: 18px; margin-bottom: 16px; font-size: 14px; line-height: 1.8; border: 1.5px solid var(--primary); text-align: center; }
+        .price-box b { color: #ffd700; font-size: 16px; }
+        .profit-hint { font-size: 11px; color: var(--danger); font-weight: bold; display: block; margin-top: -10px; margin-bottom: 10px; margin-left: 5px; }
+        .stock-error { color: var(--danger); font-size: 13px; font-weight: bold; margin-bottom: 12px; display: none; text-align: center; background: #fee2e2; padding: 10px; border-radius: 10px; }
+        
+        /* 🚀 Glassmorphism Animated Toast Notification */
+        #toast { 
+            visibility: hidden; 
+            min-width: 260px; 
+            max-width: 80%;
+            background: rgba(13, 27, 42, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #fff; 
+            text-align: center; 
+            border-radius: 24px; 
+            padding: 16px 24px; 
+            position: fixed; 
+            z-index: 10000; 
+            left: 50%; 
+            bottom: 40px; 
+            transform: translateX(-50%) scale(0.8); 
+            font-size: 15px; 
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+            border: 1.5px solid var(--primary);
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0.3s;
+        }
+        #toast.show { visibility: visible; opacity: 1; transform: translateX(-50%) scale(1); }
+
+        .inv-item { background: #fff; padding: 15px; border-radius: 18px; margin-bottom: 12px; border: 1px solid #e2e8f0; }
         .pass-container { position: relative; width: 100%; }
         .eye-btn { position: absolute; right: 15px; top: 16px; border: none; background: none; cursor: pointer; font-size: 18px; color: #64748b; padding: 0; }
+
+        /* 🔐 Login Screen (Luxury Style) */
+        #loginScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, var(--dark) 0%, #1b263b 100%); z-index: 9999; display: flex; align-items: center; justify-content: center;
+        }
+        .login-card {
+            width: 85%; max-width: 360px; text-align: center; background: rgba(255,255,255,0.04); padding: 35px 25px; border-radius: 30px; border: 1.5px solid rgba(197,168,128,0.3); backdrop-filter: blur(10px); box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .login-card h2 { color: white; font-size: 24px; margin-top: 0; margin-bottom: 25px; font-weight: bold; letter-spacing: 1px; }
+        .login-card input { background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.1); color: white; }
+        .login-card input::placeholder { color: #94a3b8; }
+        .login-card input:focus { border-color: var(--primary); background: rgba(255,255,255,0.12); }
+        .login-card .btn-main { background: var(--primary); color: var(--dark); font-weight: 800; border: none; }
+
+        /* 🔘 Floating Action Round Buttons */
+        .fab-container {
+            position: fixed; bottom: 20px; left: 0; width: 100%; z-index: 1000; display: flex; justify-content: center; gap: 15px; align-items: center; pointer-events: none;
+        }
+        .fab-btn {
+            pointer-events: auto; width: 55px; height: 55px; border-radius: 50%; border: 1.5px solid var(--primary); background: var(--dark); color: white; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.2); transition: transform 0.2s; position: relative;
+        }
+        .fab-btn:active { transform: scale(0.9); }
+        
+        /* 🎪 OGGY ANIMATED LOGOUT BUTTON STYLE (ကာတွန်းပုံစံအရှင်နှင့် လှုပ်ရှားမှုများ) */
+        .oggy-logout-btn {
+            pointer-events: auto; 
+            width: 62px; 
+            height: 62px; 
+            border-radius: 50%; 
+            cursor: pointer; 
+            padding: 4px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3); 
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            border: 2.5px solid var(--primary); 
+            outline: none; 
+            background-color: #ffffff; 
+            /* ခလုတ်နောက်ခံ Checkered ကွက်လေးများ ရွေ့လျားနေစေရန် */
+            background-image: linear-gradient(45deg, #a5b4fc 25%, transparent 25%), linear-gradient(-45deg, #a5b4fc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #a5b4fc 75%), linear-gradient(-45deg, transparent 75%, #a5b4fc 75%); 
+            background-size: 10px 10px;
+            animation: moveBg 4s linear infinite;
+        }
+        
+        /* Mouse တင်လျှင် သို့မဟုတ် နှိပ်လျှင် Oggy ပုံစံလေး တုန်ခါသွားစေရန် */
+        .oggy-logout-btn:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+        .oggy-logout-btn:hover .oggy-img {
+            animation: oggyShake 0.5s ease-in-out infinite alternate;
+        }
+        .oggy-logout-btn:active { 
+            transform: scale(0.9) rotate(-10deg); 
+        }
+        
+        .oggy-img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain; 
+            background: white; 
+            border-radius: 50%; 
+            padding: 1px; 
+            box-sizing: border-box; 
+            transition: transform 0.2s;
+        }
+
+        /* 🎬 Keyframe Animations */
+        @keyframes moveBg {
+            0% { background-position: 0px 0px; }
+            100% { background-position: 20px 20px; }
+        }
+        @keyframes oggyShake {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-4px) scale(1.05); }
+        }
     </style>
 </head>
 <body>
 
 <div id="toast"></div>
 
-<div id="loginScreen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:9999; display:flex; align-items:center; justify-content:center;">
-    <div style="width:85%; max-width:350px; text-align:center;">
-        <h2 style="font-size:24px; margin-bottom: 20px;">ဆိုင်ပစ္စည်းစီမံခန့်ခွဲမှု</h2>
+<div id="loginScreen">
+    <div class="login-card">
+        <div style="font-size: 40px; margin-bottom: 10px;">⚖️</div>
+        <h2>ကုန်းစုံ POS</h2>
         <input type="text" id="l_u" placeholder="အသုံးပြုသူအမည်">
-        
         <div class="pass-container">
             <input type="password" id="l_p" placeholder="စကားဝှက်" style="padding-right: 45px;">
-            <button type="button" class="eye-btn" onclick="togglePassword('l_p', this)">👁️</button>
+            <button type="button" class="eye-btn" onclick="togglePassword('l_p', this)" style="color: #94a3b8;">👁️</button>
         </div>
-        
         <button onclick="doLogin()" class="btn-main">ဝင်မည်</button>
     </div>
 </div>
@@ -59,27 +226,47 @@
         <div id="pGrid" class="grid"></div>
     </div>
     
-    <div style="position:fixed; bottom:20px; right:20px; z-index:1000; display:flex; flex-direction:column; gap:12px;">
-        <button id="adminBtn" onclick="toggleSheet('managerModal')" style="width:60px; height:60px; border-radius:20px; border:none; background:var(--dark); color:white; font-size:24px; display:none;">＋</button>
-        <button id="setBtn" onclick="toggleSheet('settingSheet')" style="width:60px; height:60px; border-radius:20px; border:none; background:#64748b; color:white; font-size:24px; display:none;">⚙️</button>
-        <button onclick="toggleSheet('cartSheet')" style="width:60px; height:60px; border-radius:20px; border:none; background:var(--primary); color:white; font-size:24px;">🛒 <span id="cartCount" style="position:absolute; top:5px; right:5px; background:red; color:white; font-size:12px; padding:2px 6px; border-radius:50%;">0</span></button>
+    <div class="fab-container">
+        <button id="adminBtn" class="fab-btn" onclick="toggleSheet('managerModal')" style="display:none; background: var(--primary); color: var(--dark); font-weight: bold;">＋</button>
+        <button id="setBtn" class="fab-btn" onclick="toggleSheet('settingSheet')" style="display:none;">⚙️</button>
+        <button class="fab-btn" onclick="toggleSheet('cartSheet')">
+            🛒 <span id="cartCount" style="position:absolute; top:-2px; right:-2px; background:var(--danger); color:white; font-size:11px; font-weight:bold; padding:2px 6px; border-radius:50%; border: 1px solid white;">0</span>
+        </button>
+        
+        <button id="logoutBtn" class="oggy-logout-btn" onclick="doLogout()" title="Logout ပြန်ထွက်မည်">
+            <img src="https://i.imgur.com/v8S7A7h.gif" alt="Oggy Animated" class="oggy-img">
+        </button>
     </div>
 </div>
 
 <div id="overlay" class="overlay" onclick="closeAll()"></div>
 
 <div id="managerModal" class="sheet">
-    <h3 id="formTitle">📦 ပစ္စည်းစာရင်းသွင်းခြင်း</h3>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 id="formTitle" style="margin: 0; border: none; padding: 0;">📦 ပစ္စည်းစာရင်းသွင်းခြင်း</h3>
+        <span onclick="closeAll()" style="font-size: 24px; color: #64748b; cursor: pointer;">×</span>
+    </div>
+    
     <div class="img-upload" onclick="document.getElementById('fileIn').click()">
-        <span id="upText">📷 ပုံတင်ရန်</span>
+        <span id="upText">📷<br>ပုံတင်ရန်</span>
         <img id="preImg" style="display:none;">
     </div>
     <input type="file" id="fileIn" accept="image/*" style="display:none;" onchange="handleImg(this)">
-    <input type="text" id="p_n" placeholder="ပစ္စည်းအမည်">
+    
+    <small>ပစ္စည်းအမည်</small>
+    <input type="text" id="p_n" placeholder="ပစ္စည်းအမည် ရိုက်ထည့်ပါ">
+    
     <div style="display:flex; gap:10px;">
-        <select id="p_c" style="flex:1;"></select>
-        <input type="text" id="n_c" placeholder="အမျိုးအစားသစ်" style="flex:1;">
+        <div style="flex:1;">
+            <small>အမျိုးအစား ရွေးရန်</small>
+            <select id="p_c"></select>
+        </div>
+        <div style="flex:1;">
+            <small>အမျိုးအစားသစ်</small>
+            <input type="text" id="n_c" placeholder="အသစ်ထည့်ရန်">
+        </div>
     </div>
+    
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
         <div><small>ရင်းဈေး (အိတ်လိုက်)</small><input type="number" id="p_cp" value="0" oninput="mCalc()"><span class="profit-hint">အိတ်မြတ်: <span id="hint_bp">0</span> K</span></div>
         <div><small>အိတ်အမြတ် %</small><input type="number" id="p_pp" value="10" oninput="mCalc()"></div>
@@ -92,15 +279,20 @@
         <div><small>လက်ကျန် (အိတ်)</small><input type="number" id="p_st" value="0"></div>
         <div><small>Expiry Date</small><input type="date" id="p_exp"></div>
     </div>
+    
     <div class="price-box">အိတ်ရောင်းဈေး: <b id="m_bp">0</b> K | အသေးရောင်းဈေး: <b id="m_up">0</b> K</div>
-    <button class="btn-main" onclick="save()">သိမ်းမည်</button>
+    
+    <button class="btn-main" style="background: var(--primary); color: var(--dark);" onclick="save()">သိမ်းမည်</button>
     <button id="cancelEdit" class="btn-main" style="background:#64748b; margin-top:10px; display:none;" onclick="resetForm()">မပြင်တော့ပါ</button>
-    <hr>
+    <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;">
     <div id="invList"></div>
 </div>
 
 <div id="settingSheet" class="sheet">
-    <h3>⚙️ POS Settings</h3>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3>⚙️ POS Settings</h3>
+        <span onclick="closeAll()" style="font-size: 24px; color: #64748b; cursor: pointer;">×</span>
+    </div>
     <small>Admin အကောင့်</small>
     <input type="text" id="s_au" placeholder="Admin Username">
     <div class="pass-container">
@@ -117,10 +309,13 @@
 </div>
 
 <div id="saleSheet" class="sheet">
-    <h3 id="stitle"></h3>
-    <div style="display:flex; justify-content:space-between; margin-bottom:10px; background:#eef2f6; padding:10px; border-radius:12px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 id="stitle" style="margin:0;"></h3>
+        <span onclick="closeAll()" style="font-size: 24px; color: #64748b; cursor: pointer;">×</span>
+    </div>
+    <div style="display:flex; justify-content:space-between; margin-bottom:15px; background:#f1f5f9; padding:12px; border-radius:14px;">
         <span id="sstock_info" style="color:var(--dark); font-weight:bold;"></span>
-        <span id="scurrent_price" style="color:var(--primary); font-weight:bold;"></span>
+        <span id="scurrent_price" style="color:var(--primary-dark); font-weight:bold;"></span>
     </div>
     <small>ရောင်းမည့်ပုံစံ</small>
     <select id="sunit" onchange="calcSale()">
@@ -131,17 +326,18 @@
     <input type="number" id="sqty" value="1" min="0.1" step="0.1" oninput="calcSale()">
     
     <div id="stockMsg" class="stock-error">⚠️ လက်ကျန်ထက် ပိုရောင်း၍မရပါ။</div>
-    
     <div class="price-box">ကျသင့်ငွေ: <b id="stotal">0</b> K</div>
-    
-    <button id="addBtn" class="btn-main" onclick="addToCart()">ဈေးခြင်းထဲထည့်မည်</button>
+    <button id="addBtn" class="btn-main" style="background: var(--primary); color: var(--dark);" onclick="addToCart()">ဈေးခြင်းထဲထည့်မည်</button>
 </div>
 
 <div id="cartSheet" class="sheet">
-    <h3>🛒 အရောင်းစာရင်း</h3>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3>🛒 အရောင်းစာရင်း (ဈေးခြင်း)</h3>
+        <span onclick="closeAll()" style="font-size: 24px; color: #64748b; cursor: pointer;">×</span>
+    </div>
     <div id="citems"></div>
-    <div style="margin-top:20px; font-weight:bold; text-align:right; font-size:22px;">စုစုပေါင်း: <span id="ctotal">0</span> K</div>
-    <button class="btn-main" style="background:var(--success); margin-top:15px;" onclick="checkout()">ရောင်းမည်</button>
+    <div style="margin-top:20px; font-weight:bold; text-align:right; font-size:22px; color: var(--dark);">စုစုပေါင်း: <span id="ctotal" style="color: var(--primary-dark)">0</span> K</div>
+    <button class="btn-main" style="background:var(--success); border-color: var(--success); margin-top:15px;" onclick="checkout()">ရောင်းမည် (ငွေရှင်းမည်)</button>
 </div>
 
 <script type="module">
@@ -156,12 +352,11 @@
     let accs = JSON.parse(localStorage.getItem('pos_accs')) || { au:"admin", ap:"123", su:"staff", sp:"123", def_pp: 10, def_upp: 20 };
     let cats = JSON.parse(localStorage.getItem('pos_cats')) || ["အလှကုန်", "စားသောက်ကုန်"];
 
-    // --- PASSWORD မျက်လုံး ဖွင့်/ပိတ် FUNCTION ---
     window.togglePassword = (inputId, btn) => {
         let input = document.getElementById(inputId);
         if (input.type === "password") {
             input.type = "text";
-            btn.innerText = "👁️‍🗨️"; // မျက်လုံးပွင့်သွားသည့်ပုံစံပြောင်းရန်
+            btn.innerText = "👁️‍🗨️";
         } else {
             input.type = "password";
             btn.innerText = "👁️";
@@ -170,8 +365,9 @@
 
     function showToast(msg) {
         let t = document.getElementById("toast");
-        t.innerText = msg; t.className = "show";
-        setTimeout(() => { t.className = t.className.replace("show", ""); }, 2500);
+        t.innerText = msg; 
+        t.classList.add("show");
+        setTimeout(() => { t.classList.remove("show"); }, 2500);
     }
 
     window.doLogin = () => {
@@ -181,8 +377,21 @@
         else { alert("Login မှားနေပါသည်"); return; }
         document.getElementById('loginScreen').style.display = "none";
         document.getElementById('appBody').style.display = "block";
-        if(role === "admin") { document.getElementById('adminBtn').style.display = "block"; document.getElementById('setBtn').style.display = "block"; }
+        if(role === "admin") { document.getElementById('adminBtn').style.display = "flex"; document.getElementById('setBtn').style.display = "flex"; }
         render();
+    };
+
+    window.doLogout = () => {
+        if(confirm("အကောင့်ထဲကနေ ထွက်မှာ သေချာပါသလား?")) {
+            role = "";
+            document.getElementById('l_u').value = "";
+            document.getElementById('l_p').value = "";
+            document.getElementById('adminBtn').style.display = "none";
+            document.getElementById('setBtn').style.display = "none";
+            document.getElementById('appBody').style.display = "none";
+            document.getElementById('loginScreen').style.display = "flex";
+            showToast("အကောင့်မှ ထွက်ပြီးပါပြီ 🚪");
+        }
     };
 
     window.mCalc = () => {
@@ -248,9 +457,9 @@
         let t = 0; document.getElementById('cartCount').innerText = cart.length;
         document.getElementById('citems').innerHTML = cart.map((i, idx) => {
             t += i.total;
-            return `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eee;">
+            return `<div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #eee; align-items:center;">
                 <span>${i.name} (${i.qty} ${i.unit})</span>
-                <b>${i.total.toLocaleString()} K <span onclick="cart.splice(${idx},1);updateCart()" style="color:red; margin-left:10px;">×</span></b>
+                <b style="color:var(--dark);">${i.total.toLocaleString()} K <span onclick="cart.splice(${idx},1);updateCart()" style="color:var(--danger); margin-left:15px; font-size:20px; cursor:pointer;">×</span></b>
             </div>`;
         }).join('');
         document.getElementById('ctotal').innerText = t.toLocaleString();
@@ -287,11 +496,11 @@
     function render() {
         if(!role) return;
         document.getElementById('p_c').innerHTML = cats.map(c => `<option value="${c}">${c}</option>`).join('');
-        document.getElementById('catFilter').innerHTML = ["အားလုံး", ...cats].map(c => `<button onclick="setFilter('${c}')" style="padding:8px 12px; border-radius:10px; border:none; background:${filterCat===c?'var(--primary)':'white'}; color:${filterCat===c?'white':'black'}; margin-right:8px; white-space:nowrap;">${c}</button>`).join('');
+        document.getElementById('catFilter').innerHTML = ["အားလုံး", ...cats].map(c => `<button onclick="setFilter('${c}')" style="padding:10px 16px; border-radius:14px; border:1.5px solid ${filterCat===c?'var(--primary)':'#e2e8f0'}; background:${filterCat===c?'var(--dark)':'white'}; color:${filterCat===c?'white':'var(--dark)'}; margin-right:8px; font-weight:bold; white-space:nowrap; cursor:pointer;">${c}</button>`).join('');
         let f = filterCat === "အားလုံး" ? db : db.filter(x => x.cat === filterCat);
-        document.getElementById('pGrid').innerHTML = f.map(p => `<div class="card"><img src="${p.img || 'https://via.placeholder.com/150'}"><b>${p.name}</b><br><small>${p.st.toFixed(2)} အိတ်ကျန်</small><button onclick="openSale('${p.id}')" style="width:100%; margin-top:8px; background:var(--success); color:white; border:none; padding:8px; border-radius:10px;">ရောင်းမည်</button></div>`).join('');
+        document.getElementById('pGrid').innerHTML = f.map(p => `<div class="card"><img src="${p.img || 'https://via.placeholder.com/150'}"><b>${p.name}</b><small>${p.st.toFixed(2)} အိတ်ကျန်</small><button class="btn-sell" onclick="openSale('${p.id}')">ရောင်းမည်</button></div>`).join('');
         if(role === "admin") {
-            document.getElementById('invList').innerHTML = db.map(p => `<div class="inv-item"><b>${p.name}</b><br><small>ရင်း: ${p.cp} | ကျန်: ${p.st.toFixed(2)}</small><div style="margin-top:5px;"><button onclick="editP('${p.id}')">ပြင်</button> <button onclick="delP('${p.id}')" style="color:red;">ဖျက်</button></div></div>`).join('');
+            document.getElementById('invList').innerHTML = db.map(p => `<div class="inv-item"><b>${p.name}</b><br><small>ရင်း: ${p.cp} | ကျန်: ${p.st.toFixed(2)}</small><div style="margin-top:8px;"><button onclick="editP('${p.id}')" style="background:var(--dark); color:white; border:none; padding:5px 12px; border-radius:8px;">ပြင်</button> <button onclick="delP('${p.id}')" style="color:var(--danger); background:none; border:none; margin-left:10px; font-weight:bold;">ဖျက်</button></div></div>`).join('');
         }
 
         document.getElementById('s_au').value = accs.au;
