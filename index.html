@@ -147,14 +147,14 @@
         }
         .fab-btn:active { transform: scale(0.9); }
         
-        /* 🎪 OGGY ANIMATED LOGOUT BUTTON STYLE (ကာတွန်းပုံစံအရှင်နှင့် လှုပ်ရှားမှုများ) */
+        /* 🎪 OGGY ANIMATED LOGOUT BUTTON STYLE (ကာတွန်းပုံအစစ်အရှင်) */
         .oggy-logout-btn {
             pointer-events: auto; 
             width: 62px; 
             height: 62px; 
             border-radius: 50%; 
             cursor: pointer; 
-            padding: 4px; 
+            padding: 3px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
@@ -162,43 +162,24 @@
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             border: 2.5px solid var(--primary); 
             outline: none; 
-            background-color: #ffffff; 
-            /* ခလုတ်နောက်ခံ Checkered ကွက်လေးများ ရွေ့လျားနေစေရန် */
-            background-image: linear-gradient(45deg, #a5b4fc 25%, transparent 25%), linear-gradient(-45deg, #a5b4fc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #a5b4fc 75%), linear-gradient(-45deg, transparent 75%, #a5b4fc 75%); 
-            background-size: 10px 10px;
-            animation: moveBg 4s linear infinite;
+            background: #ffffff;
+            overflow: hidden;
         }
         
-        /* Mouse တင်လျှင် သို့မဟုတ် နှိပ်လျှင် Oggy ပုံစံလေး တုန်ခါသွားစေရန် */
+        /* ခလုတ်ကို ထိလိုက်လျှင် အနည်းငယ် ကြီးလာစေရန် */
         .oggy-logout-btn:hover {
-            transform: scale(1.1) rotate(5deg);
-        }
-        .oggy-logout-btn:hover .oggy-img {
-            animation: oggyShake 0.5s ease-in-out infinite alternate;
+            transform: scale(1.1);
+            border-color: #ff4757; /* နှိပ်ခါနီးရင် ဘောင်လေး နီသွားမည် */
         }
         .oggy-logout-btn:active { 
-            transform: scale(0.9) rotate(-10deg); 
+            transform: scale(0.9); 
         }
         
         .oggy-img { 
             width: 100%; 
             height: 100%; 
-            object-fit: contain; 
-            background: white; 
-            border-radius: 50%; 
-            padding: 1px; 
-            box-sizing: border-box; 
-            transition: transform 0.2s;
-        }
-
-        /* 🎬 Keyframe Animations */
-        @keyframes moveBg {
-            0% { background-position: 0px 0px; }
-            100% { background-position: 20px 20px; }
-        }
-        @keyframes oggyShake {
-            0% { transform: translateY(0) scale(1); }
-            100% { transform: translateY(-4px) scale(1.05); }
+            object-fit: cover; 
+            border-radius: 50%;
         }
     </style>
 </head>
@@ -234,7 +215,7 @@
         </button>
         
         <button id="logoutBtn" class="oggy-logout-btn" onclick="doLogout()" title="Logout ပြန်ထွက်မည်">
-            <img src="https://i.imgur.com/v8S7A7h.gif" alt="Oggy Animated" class="oggy-img">
+            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbW9pM3RndXN5cHZ6Nnh6bnp5ZXh5ZzF3bHByY3ZndXpzeXh3Y3ZtayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/v8S7A7hY9uI6X7B9On/giphy.gif" alt="Oggy GIF" class="oggy-img">
         </button>
     </div>
 </div>
