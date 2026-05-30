@@ -138,7 +138,7 @@
         .login-card input:focus { border-color: var(--primary); background: rgba(255,255,255,0.12); }
         .login-card .btn-main { background: var(--primary); color: var(--dark); font-weight: 800; border: none; }
 
-        /* 🔘 Floating Action Round Buttons */
+        /* 🔘 Floating Action Round Buttons Bar */
         .fab-container {
             position: fixed; bottom: 20px; left: 0; width: 100%; z-index: 1000; display: flex; justify-content: center; gap: 15px; align-items: center; pointer-events: none;
         }
@@ -147,40 +147,35 @@
         }
         .fab-btn:active { transform: scale(0.9); }
         
-        /* 🍔 ဟန်ဘာကာ ဓာတ်ပုံစစ်စစ် (နောက်ခံအကြည်) Logout ခလုတ်ဒီဇိုင်း */
-        .burger-logout-btn {
+        /* ✨ ရှင်းလင်းသေသပ်ပြီး Luxury ဆန်တဲ့ စံပြ Logout ခလုတ်ဒီဇိုင်းသစ် */
+        .logout-modern-btn {
             pointer-events: auto; 
-            width: 58px; 
-            height: 58px; 
+            width: 55px; 
+            height: 55px; 
             border-radius: 50%; 
             cursor: pointer; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15); 
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            border: 2px solid var(--primary); 
-            outline: none; 
-            background: #ffffff;
+            border: 1.5px solid var(--primary); 
+            background: var(--dark); 
+            color: #ff6b6b; /* Soft Red Icon */
+            font-size: 22px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2); 
+            transition: all 0.2s ease;
+            outline: none;
             padding: 0;
-            overflow: hidden;
         }
-        
-        .burger-logout-btn:hover {
-            transform: scale(1.1) rotate(5deg);
-            border-color: #ffaa00;
+        .logout-modern-btn:hover {
+            transform: scale(1.08);
+            background: #fff5f5;
+            border-color: #ff6b6b;
         }
-        .burger-logout-btn:active { 
+        .logout-modern-btn:active { 
             transform: scale(0.95); 
         }
-        
-        .burger-img { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-        }
 
-        /* 👑 နှုတ်ခွန်းဆက်စာ Pop-up အလှစနစ် (Goodbye Modal) */
+        /* 👑 Premium Goodbye Modal Pop-up */
         .goodbye-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(13, 27, 42, 0.85); 
@@ -188,24 +183,24 @@
             z-index: 10005; display: none; align-items: center; justify-content: center;
         }
         .goodbye-card {
-            width: 80%; max-width: 340px; text-align: center;
-            background: white; padding: 40px 25px; border-radius: 32px;
-            border: 2px solid var(--primary);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+            width: 80%; max-width: 320px; text-align: center;
+            background: white; padding: 35px 25px; border-radius: 28px;
+            border: 1.5px solid var(--primary);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.35);
             animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
         .goodbye-card h3 {
-            font-size: 22px; color: var(--dark); margin: 15px 0 10px 0; font-weight: bold;
+            font-size: 20px; color: var(--dark); margin: 15px 0 8px 0; font-weight: bold;
         }
         .goodbye-card p {
-            font-size: 15px; color: #64748b; line-height: 1.6; margin: 0 0 25px 0;
+            font-size: 14px; color: #64748b; line-height: 1.6; margin: 0 0 25px 0;
         }
         .loader-bar {
-            width: 100%; height: 5px; background: #f1f5f9; border-radius: 10px; overflow: hidden; position: relative;
+            width: 100%; height: 4px; background: #e2e8f0; border-radius: 10px; overflow: hidden; position: relative;
         }
         .loader-progress {
-            width: 0%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-dark));
-            animation: loadOut 3s linear forwards;
+            width: 0%; height: 100%; background: var(--primary);
+            animation: loadOut 2s linear forwards;
         }
 
         @keyframes popIn {
@@ -224,13 +219,13 @@
 
 <div id="goodbyeScreen" class="goodbye-screen">
     <div class="goodbye-card">
-        <img src="https://i.ibb.co/3mYmG3n/burger-transparent.png" alt="Burger" style="width: 80px; height: 80px; object-fit: contain; margin: 0 auto;">
-        <h3>တာ့တာ... သွားပြီနော် 🍔</h3>
-        <p>မင်္ဂလာရှိသောနေ့လေး ဖြစ်ပါစေရှင်...<br>နောက်လည်း ပြန်လာခဲ့ဖို့ မျှော်လင့်ပါတယ်နော်။</p>
+        <div style="font-size: 42px; margin-bottom: 5px;">🤝</div>
+        <h3>ကျေးဇူးတင်ပါသည်</h3>
+        <p>အကောင့်ထဲမှ ဘေးကင်းစွာ ထွက်ရှိနေပါပြီ။<br>ကောင်းသောနေ့လေး ဖြစ်ပါစေရှင်။</p>
         <div class="loader-bar">
             <div class="loader-progress"></div>
         </div>
-        <small style="color: #a0aec0; margin-top: 10px; font-weight: normal; font-size: 11px; display: block;">ခေတ္တစောင့်ဆိုင်းပေးပါ...</small>
+        <small style="color: #94a3b8; margin-top: 12px; font-weight: normal; font-size: 12px; display: block;">စနစ်ပိတ်သိမ်းနေသည်...</small>
     </div>
 </div>
 
@@ -261,8 +256,8 @@
             🛒 <span id="cartCount" style="position:absolute; top:-2px; right:-2px; background:var(--danger); color:white; font-size:11px; font-weight:bold; padding:2px 6px; border-radius:50%; border: 1px solid white;">0</span>
         </button>
         
-        <button id="logoutBtn" class="burger-logout-btn" onclick="doLogout()" title="Logout ပြန်ထွက်မည်">
-            <img src="https://i.ibb.co/3mYmG3n/burger-transparent.png" alt="Burger Logout" class="burger-img">
+        <button id="logoutBtn" class="logout-modern-btn" onclick="doLogout()" title="Logout ပြန်ထွက်မည်">
+            ⎋
         </button>
     </div>
 </div>
@@ -409,24 +404,22 @@
         render();
     };
 
-    // 🚪 Logout စနစ်ကို ပိုမိုလှပသော နှုတ်ဆက်စာလွှာ Pop-up ဖြင့် ပြောင်းလဲခြင်း
+    // 🚪 Logout စနစ်
     window.doLogout = () => {
-        if(confirm("အကောင့်ထဲကနေ ထွက်မှာ သေချက်ပါသလား?")) {
-            // နှုတ်ဆက်စာလွှာ Screen ကို ပြသမည်
+        if(confirm("အကောင့်ထဲကနေ ထွက်မှာ သေချာပါသလား?")) {
             document.getElementById('goodbyeScreen').style.display = 'flex';
             
             setTimeout(() => {
-                // ၃ စက္ကန့်ပြည့်လျှင် စနစ်များကို Reset လုပ်ပြီး Login သို့ ခေါ်သွားမည်
                 role = "";
                 document.getElementById('l_u').value = "";
                 document.getElementById('l_p').value = "";
                 document.getElementById('adminBtn').style.display = "none";
                 document.getElementById('setBtn').style.display = "none";
                 document.getElementById('appBody').style.display = "none";
-                document.getElementById('goodbyeScreen').style.display = "none"; // နှုတ်ဆက်စာ ပိတ်မည်
+                document.getElementById('goodbyeScreen').style.display = "none";
                 document.getElementById('loginScreen').style.display = "flex";
                 showToast("အကောင့်မှ ထွက်ပြီးပါပြီ 🚪");
-            }, 3000); // ၃ စက္ကန့် စောင့်မည်
+            }, 2000); // စောင့်ဆိုင်းချိန် ၂ စက္ကန့်သို့ လျှော့ချထားသည်
         }
     };
 
