@@ -147,19 +147,19 @@
         }
         .fab-btn:active { transform: scale(0.9); }
         
-        /* 🍔 ဟန်ဘာကာ ဓာတ်ပုံစစ်စစ် (တစ်သက်လုံးပုံမကျိုးမည့် SVG/Base64 အကြည်ဒီဇိုင်း) */
+        /* 🍔 ဟန်ဘာကာ ဓာတ်ပုံစစ်စစ် (နောက်ခံအကြည်) Logout ခလုတ်ဒီဇိုင်း */
         .burger-logout-btn {
             pointer-events: auto; 
-            width: 55px; 
-            height: 55px; 
+            width: 58px; 
+            height: 58px; 
             border-radius: 50%; 
             cursor: pointer; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            box-shadow: 0 6px 15px rgba(0,0,0,0.2); 
-            transition: all 0.2s ease; 
-            border: 1.5px solid var(--primary); 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15); 
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            border: 2px solid var(--primary); 
             outline: none; 
             background: #ffffff;
             padding: 0;
@@ -167,17 +167,17 @@
         }
         
         .burger-logout-btn:hover {
-            transform: scale(1.1);
+            transform: scale(1.1) rotate(5deg);
             border-color: #ffaa00;
         }
         .burger-logout-btn:active { 
-            transform: scale(0.9); 
+            transform: scale(0.95); 
         }
         
         .burger-img { 
-            width: 85%; 
-            height: 85%; 
-            object-fit: contain; 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
         }
 
         /* 👑 နှုတ်ခွန်းဆက်စာ Pop-up အလှစနစ် (Goodbye Modal) */
@@ -208,7 +208,7 @@
             animation: loadOut 3s linear forwards;
         }
 
-        @keyframes popIn {
+        @pragma-keyframes popIn {
             0% { transform: scale(0.8); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
@@ -224,8 +224,8 @@
 
 <div id="goodbyeScreen" class="goodbye-screen">
     <div class="goodbye-card">
-        <div style="font-size: 55px; margin-bottom: 10px; animation: bounce 1s infinite alternate;">🍔</div>
-        <h3>တာ့တာ... သွားပြီနော်</h3>
+        <img src="https://i.ibb.co/3mYmG3n/burger-transparent.png" alt="Burger" style="width: 80px; height: 80px; object-fit: contain; margin: 0 auto 15px auto; display: block;">
+        <h3>တာ့တာ... သွားပြီနော် 🍔</h3>
         <p>မင်္ဂလာရှိသောနေ့လေး ဖြစ်ပါစေရှင်...<br>နောက်လည်း ပြန်လာခဲ့ဖို့ မျှော်လင့်ပါတယ်နော်။</p>
         <div class="loader-bar">
             <div class="loader-progress"></div>
@@ -255,235 +255,4 @@
     </div>
     
     <div class="fab-container">
-        <button id="adminBtn" class="fab-btn" onclick="toggleSheet('managerModal')" style="display:none; background: var(--primary); color: var(--dark); font-weight: bold;">＋</button>
-        <button id="setBtn" class="fab-btn" onclick="toggleSheet('settingSheet')" style="display:none;">⚙️</button>
-        <button class="fab-btn" onclick="toggleSheet('cartSheet')">
-            🛒 <span id="cartCount" style="position:absolute; top:-2px; right:-2px; background:var(--danger); color:white; font-size:11px; font-weight:bold; padding:2px 6px; border-radius:50%; border: 1px solid white;">0</span>
-        </button>
-        
-        <button id="logoutBtn" class="burger-logout-btn" onclick="doLogout()" title="Logout ပြန်ထွက်မည်">
-            <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='%23f4a261' d='M464 256c0-60-40-112-96-125V96c0-17.7-14.3-32-32-32H176c-17.7 0-32 14.3-32 32v35c-56 13-96 65-96 125v16h416v-16z'/><path fill='%23e76f51' d='M32 288h448v32H32z'/><path fill='%232a9d8f' d='M48 336c10 0 20 8 20 18s10 18 20 18 20-8 20-18 10-18 20-18 20 8 20 18 10 18 20 18 20-8 20-18 10-18 20-18 20 8 20 18 10 18 20 18 20-8 20-18 10-18 20-18 20 8 20 18 10 18 20 18 20-8 20-18 10-18 20-18s20 8 20 18-10 18-20 18H48z'/><path fill='%23e9c46a' d='M32 384h448v16c0 26.5-21.5 48-48 48H82c-26.5 0-48-21.5-48-48v-16z'/><circle cx='200' cy='120' r='6' fill='%23fff'/><circle cx='280' cy='110' r='6' fill='%23fff'/><circle cx='340' cy='150' r='6' fill='%23fff'/><circle cx='150' cy='160' r='6' fill='%23fff'/><circle cx='240' cy='170' r='6' fill='%23fff'/></svg>" alt="Burger Logout" class="burger-img">
-        </button>
-    </div>
-</div>
-
-<div id="overlay" class="overlay" onclick="closeAll()"></div>
-
-<div id="managerModal" class="sheet">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h3 id="formTitle" style="margin: 0; border: none; padding: 0;">📦 ပစ္စည်းစာရင်းသွင်းခြင်း</h3>
-        <span onclick="closeAll()" style="font-size: 24px; color: #64748b; cursor: pointer;">×</span>
-    </div>
-    
-    <div class="img-upload" onclick="document.getElementById('fileIn').click()">
-        <span id="upText">📷<br>ပုံတင်ရန်</span>
-        <img id="preImg" style="display:none;">
-    </div>
-    <input type="file" id="fileIn" accept="image/*" style="display:none;" onchange="handleImg(this)">
-    
-    <small>ပစ္စည်းအမည်</small>
-    <input type="text" id="p_n" placeholder="ပစ္စည်းအမည် ရိုက်ထည့်ပါ">
-    
-    <div style="display:flex; gap:10px;">
-        <div style="flex:1;">
-            <small>အမျိုးအစား ရွေးရန်</small>
-            <select id="p_c"></select>
-        </div>
-        <div style="flex:1;">
-            <small>အမျိုးအစားသစ်</small>
-            <input type="text" id="n_c" placeholder="အသစ်ထည့်ရန်">
-        </div>
-    </div>
-    
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-        <div><small>ရင်းဈေး (အိတ်လိုက်)</small><input type="number" id="p_cp" value="0" oninput="mCalc()"><span class="profit-hint">အိတ်မြတ်: <span id="hint_bp">0</span> K</span></div>
-        <div><small>အိတ်အမြတ် %</small><input type="number" id="p_pp" value="10" oninput="mCalc()"></div>
-    </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-        <div><small>အိတ်ထဲပါဝင်မှု</small><input type="number" id="p_ps" value="1" oninput="mCalc()"><span class="profit-hint">အသေးမြတ်: <span id="hint_up">0</span> K</span></div>
-        <div><small>အသေးအမြတ် %</small><input type="number" id="p_upp" value="20" oninput="mCalc()"></div>
-    </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-        <div><small>လက်ကျန် (အိတ်)</small><input type="number" id="p_st" value="0"></div>
-        <div><small>Expiry Date</small><input type="date" id="p_exp"></div>
-    </div>
-    
-    <div class="price-box">အိတ်ရောင်းဈေး: <b id="m_bp">0</b> K | အသေးရောင်းဈေး: <b id="m_up">0</b> K</div>
-    
-    <button class="btn-main" style="background: var(--primary); color: var(--dark);" onclick="save()">သိမ်းမည်</button>
-    <button id="cancelEdit" class="btn-main" style="background:#64748b; margin-top:10px; display:none;" onclick="resetForm()">မပြင်တော့ပါ</button>
-    <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;">
-    <div id="invList"></div>
-</div>
-
-<div id="settingSheet" class="sheet">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h3>⚙️ POS Settings</h3>
-        <span onclick="closeAll()" style="font-size: 24px; color: #64748b; cursor: pointer;">×</span>
-    </div>
-    <small>Admin အကောင့်</small>
-    <input type="text" id="s_au" placeholder="Admin Username">
-    <div class="pass-container">
-        <input type="password" id="s_ap" placeholder="Admin Password" style="padding-right: 45px;">
-        <button type="button" class="eye-btn" onclick="togglePassword('s_ap', this)">👁️</button>
-    </div>
-    <small>Staff အကောင့်</small>
-    <input type="text" id="s_su" placeholder="Staff Username">
-    <div class="pass-container">
-        <input type="password" id="s_sp" placeholder="Staff Password" style="padding-right: 45px;">
-        <button type="button" class="eye-btn" onclick="togglePassword('s_sp', this)">👁️</button>
-    </div>
-    <button class="btn-main" onclick="saveSets()">သိမ်းမည်</button>
-</div>
-
-<div id="saleSheet" class="sheet">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h3 id="stitle" style="margin:0;"></h3>
-        <span onclick="closeAll()" style="font-size: 24px; color: #64748b; cursor: pointer;">×</span>
-    </div>
-    <div style="display:flex; justify-content:space-between; margin-bottom:15px; background:#f1f5f9; padding:12px; border-radius:14px;">
-        <span id="sstock_info" style="color:var(--dark); font-weight:bold;"></span>
-        <span id="scurrent_price" style="color:var(--primary-dark); font-weight:bold;"></span>
-    </div>
-    <small>ရောင်းမည့်ပုံစံ</small>
-    <select id="sunit" onchange="calcSale()">
-        <option value="p">အထုပ်ကြီး (အိတ်လိုက်)</option>
-        <option value="u">အထုပ်သေး (တစ်ခုချင်း)</option>
-    </select>
-    <small>အရေအတွက်</small>
-    <input type="number" id="sqty" value="1" min="0.1" step="0.1" oninput="calcSale()">
-    
-    <div id="stockMsg" class="stock-error">⚠️ လက်ကျန်ထက် ပိုရောင်း၍မရပါ။</div>
-    <div class="price-box">ကျသင့်ငွေ: <b id="stotal">0</b> K</div>
-    <button id="addBtn" class="btn-main" style="background: var(--primary); color: var(--dark);" onclick="addToCart()">ဈေးခြင်းထဲထည့်မည်</button>
-</div>
-
-<div id="cartSheet" class="sheet">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h3>🛒 အရောင်းစာရင်း (ဈေးခြင်း)</h3>
-        <span onclick="closeAll()" style="font-size: 24px; color: #64748b; cursor: pointer;">×</span>
-    </div>
-    <div id="citems"></div>
-    <div style="margin-top:20px; font-weight:bold; text-align:right; font-size:22px; color: var(--dark);">စုစုပေါင်း: <span id="ctotal" style="color: var(--primary-dark)">0</span> K</div>
-    <button class="btn-main" style="background:var(--success); border-color: var(--success); margin-top:15px;" onclick="checkout()">ရောင်းမည် (ငွေရှင်းမည်)</button>
-</div>
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, updateDoc, doc, deleteDoc, onSnapshot, getDoc, initializeFirestore, persistentLocalCache } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-    const firebaseConfig = { projectId: "myrecordsystem-af249" };
-    const app = initializeApp(firebaseConfig);
-    const fs = initializeFirestore(app, { localCache: persistentLocalCache() });
-    
-    let db = [], cart = [], editId = null, role = "", imgB64 = "";
-    let accs = JSON.parse(localStorage.getItem('pos_accs')) || { au:"admin", ap:"123", su:"staff", sp:"123", def_pp: 10, def_upp: 20 };
-    let cats = JSON.parse(localStorage.getItem('pos_cats')) || ["အလှကုန်", "စားသောက်ကုန်"];
-
-    window.togglePassword = (inputId, btn) => {
-        let input = document.getElementById(inputId);
-        if (input.type === "password") {
-            input.type = "text";
-            btn.innerText = "👁️‍🗨️";
-        } else {
-            input.type = "password";
-            btn.innerText = "👁️";
-        }
-    };
-
-    function showToast(msg) {
-        let t = document.getElementById("toast");
-        t.innerText = msg; 
-        t.classList.add("show");
-        setTimeout(() => { t.classList.remove("show"); }, 2500);
-    }
-
-    window.doLogin = () => {
-        let u = document.getElementById('l_u').value, p = document.getElementById('l_p').value;
-        if (u === accs.au && p === accs.ap) role = "admin";
-        else if (u === accs.su && p === accs.sp) role = "staff";
-        else { alert("Login မှားနေပါသည်"); return; }
-        document.getElementById('loginScreen').style.display = "none";
-        document.getElementById('appBody').style.display = "block";
-        if(role === "admin") { document.getElementById('adminBtn').style.display = "flex"; document.getElementById('setBtn').style.display = "flex"; }
-        render();
-    };
-
-    // 🚪 Logout စနစ်ကို ပိုမိုလှပသော နှုတ်ဆက်စာလွှာ Pop-up ဖြင့် ပြောင်းလဲခြင်း
-    window.doLogout = () => {
-        if(confirm("အကောင့်ထဲကနေ ထွက်မှာ သေချာပါသလား?")) {
-            // နှုတ်ဆက်စာလွှာ Screen ကို ပြသမည်
-            document.getElementById('goodbyeScreen').style.display = 'flex';
-            
-            setTimeout(() => {
-                // ၃ စက္ကန့်ပြည့်လျှင် စနစ်များကို Reset လုပ်ပြီး Login သို့ ခေါ်သွားမည်
-                role = "";
-                document.getElementById('l_u').value = "";
-                document.getElementById('l_p').value = "";
-                document.getElementById('adminBtn').style.display = "none";
-                document.getElementById('setBtn').style.display = "none";
-                document.getElementById('appBody').style.display = "none";
-                document.getElementById('goodbyeScreen').style.display = "none"; // နှုတ်ဆက်စာ ပိတ်မည်
-                document.getElementById('loginScreen').style.display = "flex";
-                showToast("အကောင့်မှ ထွက်ပြီးပါပြီ 🚪");
-            }, 3000); 
-        }
-    };
-
-    window.mCalc = () => {
-        let cp = parseFloat(document.getElementById('p_cp').value) || 0;
-        let pp = parseFloat(document.getElementById('p_pp').value) || 0;
-        let upp = parseFloat(document.getElementById('p_upp').value) || 0;
-        let ps = parseFloat(document.getElementById('p_ps').value) || 1;
-        let bp = Math.round(cp + (cp * pp / 100));
-        let up = Math.round((cp / ps) + ((cp / ps) * upp / 100));
-        document.getElementById('hint_bp').innerText = (bp - cp).toLocaleString();
-        document.getElementById('hint_up').innerText = Math.round(up - (cp/ps)).toLocaleString();
-        document.getElementById('m_bp').innerText = bp.toLocaleString();
-        document.getElementById('m_up').innerText = up.toLocaleString();
-        return { cp, pp, upp, ps, bp, up };
-    };
-
-    onSnapshot(collection(fs, "products"), (s) => { db = s.docs.map(d => ({ id: d.id, ...d.data() })); render(); });
-
-    window.save = async () => {
-        let n = document.getElementById('p_n').value; if(!n) return;
-        let v = mCalc();
-        let cat = document.getElementById('n_c').value || document.getElementById('p_c').value;
-        let data = { name:n, cat:cat, ...v, st: parseFloat(document.getElementById('p_st').value)||0, exp: document.getElementById('p_exp').value, img:imgB64 };
-        if(editId) await updateDoc(doc(fs, "products", editId), data); else await addDoc(collection(fs, "products"), data);
-        resetForm(); showToast("သိမ်းဆည်းပြီးပါပြီ ✅");
-    };
-
-    let curP = null;
-    window.openSale = (id) => { 
-        curP = db.find(x => x.id === id); 
-        document.getElementById('stitle').innerText = curP.name; 
-        document.getElementById('sstock_info').innerText = `လက်ကျန်: ${curP.st.toFixed(2)} အိတ်`; 
-        document.getElementById('sqty').value = 1; 
-        calcSale(); 
-        toggleSheet('saleSheet'); 
-    };
-
-    window.calcSale = () => {
-        let u = document.getElementById('sunit').value, q = parseFloat(document.getElementById('sqty').value)||0;
-        let price = (u === 'p' ? curP.bp : curP.up);
-        let deductNeeded = (u === 'p' ? q : q / curP.ps);
-        
-        if (deductNeeded > curP.st) {
-            document.getElementById('stockMsg').style.display = 'block';
-            document.getElementById('addBtn').disabled = true;
-        } else {
-            document.getElementById('stockMsg').style.display = 'none';
-            document.getElementById('addBtn').disabled = false;
-        }
-        
-        document.getElementById('scurrent_price').innerText = `၁ ${u==='p'?'အိတ်':'ထုပ်'}: ${price.toLocaleString()} K`;
-        document.getElementById('stotal').innerText = Math.round(q * price).toLocaleString();
-    };
-
-    window.addToCart = () => {
-        let u = document.getElementById('sunit').value, q = parseFloat(document.getElementById('sqty').value);
-        let price = (u === 'p' ? curP.bp : curP.up);
-        cart.push({ id:curP.id, name:curP.name, qty:q, unit:(u==='p'?'အိတ်':'ထုပ်'), total:q*price, deduct:(u==='p'?q:q/curP.ps) });
-        updateCart(); closeAll(); showToast
+        <button id="adminBtn
