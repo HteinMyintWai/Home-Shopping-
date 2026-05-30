@@ -208,7 +208,7 @@
             animation: loadOut 3s linear forwards;
         }
 
-        @pragma-keyframes popIn {
+        @keyframes popIn {
             0% { transform: scale(0.8); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
@@ -224,7 +224,7 @@
 
 <div id="goodbyeScreen" class="goodbye-screen">
     <div class="goodbye-card">
-        <img src="https://i.ibb.co/3mYmG3n/burger-transparent.png" alt="Burger" style="width: 80px; height: 80px; object-fit: contain; margin: 0 auto 15px auto; display: block;">
+        <img src="https://i.ibb.co/3mYmG3n/burger-transparent.png" alt="Burger" style="width: 80px; height: 80px; object-fit: contain; margin: 0 auto;">
         <h3>တာ့တာ... သွားပြီနော် 🍔</h3>
         <p>မင်္ဂလာရှိသောနေ့လေး ဖြစ်ပါစေရှင်...<br>နောက်လည်း ပြန်လာခဲ့ဖို့ မျှော်လင့်ပါတယ်နော်။</p>
         <div class="loader-bar">
@@ -255,4 +255,309 @@
     </div>
     
     <div class="fab-container">
-        <button id="adminBtn
+        <button id="adminBtn" class="fab-btn" onclick="toggleSheet('managerModal')" style="display:none; background: var(--primary); color: var(--dark); font-weight: bold;">＋</button>
+        <button id="setBtn" class="fab-btn" onclick="toggleSheet('settingSheet')" style="display:none;">⚙️</button>
+        <button class="fab-btn" onclick="toggleSheet('cartSheet')">
+            🛒 <span id="cartCount" style="position:absolute; top:-2px; right:-2px; background:var(--danger); color:white; font-size:11px; font-weight:bold; padding:2px 6px; border-radius:50%; border: 1px solid white;">0</span>
+        </button>
+        
+        <button id="logoutBtn" class="burger-logout-btn" onclick="doLogout()" title="Logout ပြန်ထွက်မည်">
+            <img src="https://i.ibb.co/3mYmG3n/burger-transparent.png" alt="Burger Logout" class="burger-img">
+        </button>
+    </div>
+</div>
+
+<div id="overlay" class="overlay" onclick="closeAll()"></div>
+
+<div id="managerModal" class="sheet">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 id="formTitle" style="margin: 0; border: none; padding: 0;">📦 ပစ္စည်းစာရင်းသွင်းခြင်း</h3>
+        <span onclick="closeAll()" style="font-size: 24px; color: #64748b; cursor: pointer;">×</span>
+    </div>
+    
+    <div class="img-upload" onclick="document.getElementById('fileIn').click()">
+        <span id="upText">📷<br>ပုံတင်ရန်</span>
+        <img id="preImg" style="display:none;">
+    </div>
+    <input type="file" id="fileIn" accept="image/*" style="display:none;" onchange="handleImg(this)">
+    
+    <small>ပစ္စည်းအမည်</small>
+    <input type="text" id="p_n" placeholder="ပစ္စည်းအမည် ရိုက်ထည့်ပါ">
+    
+    <div style="display:flex; gap:10px;">
+        <div style="flex:1;">
+            <small>အမျိုးအစား ရွေးရန်</small>
+            <select id="p_c"></select>
+        </div>
+        <div style="flex:1;">
+            <small>အမျိုးအစားသစ်</small>
+            <input type="text" id="n_c" placeholder="အသစ်ထည့်ရန်">
+        </div>
+    </div>
+    
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div><small>ရင်းဈေး (အိတ်လိုက်)</small><input type="number" id="p_cp" value="0" oninput="mCalc()"><span class="profit-hint">အိတ်မြတ်: <span id="hint_bp">0</span> K</span></div>
+        <div><small>အိတ်အမြတ် %</small><input type="number" id="p_pp" value="10" oninput="mCalc()"></div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div><small>အိတ်ထဲပါဝင်မှု</small><input type="number" id="p_ps" value="1" oninput="mCalc()"><span class="profit-hint">အသေးမြတ်: <span id="hint_up">0</span> K</span></div>
+        <div><small>အသေးအမြတ် %</small><input type="number" id="p_upp" value="20" oninput="mCalc()"></div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div><small>လက်ကျန် (အိတ်)</small><input type="number" id="p_st" value="0"></div>
+        <div><small>Expiry Date</small><input type="date" id="p_exp"></div>
+    </div>
+    
+    <div class="price-box">အိတ်ရောင်းဈေး: <b id="m_bp">0</b> K | အသေးရောင်းဈေး: <b id="m_up">0</b> K</div>
+    
+    <button class="btn-main" style="background: var(--primary); color: var(--dark);" onclick="save()">သိမ်းမည်</button>
+    <button id="cancelEdit" class="btn-main" style="background:#64748b; margin-top:10px; display:none;" onclick="resetForm()">မပြင်တော့ပါ</button>
+    <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;">
+    <div id="invList"></div>
+</div>
+
+<div id="settingSheet" class="sheet">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3>⚙️ POS Settings</h3>
+        <span onclick="closeAll()" style="font-size: 24px; color: #64748b; cursor: pointer;">×</span>
+    </div>
+    <small>Admin အကောင့်</small>
+    <input type="text" id="s_au" placeholder="Admin Username">
+    <div class="pass-container">
+        <input type="password" id="s_ap" placeholder="Admin Password" style="padding-right: 45px;">
+        <button type="button" class="eye-btn" onclick="togglePassword('s_ap', this)">👁️</button>
+    </div>
+    <small>Staff အကောင့်</small>
+    <input type="text" id="s_su" placeholder="Staff Username">
+    <div class="pass-container">
+        <input type="password" id="s_sp" placeholder="Staff Password" style="padding-right: 45px;">
+        <button type="button" class="eye-btn" onclick="togglePassword('s_sp', this)">👁️</button>
+    </div>
+    <button class="btn-main" onclick="saveSets()">သိမ်းမည်</button>
+</div>
+
+<div id="saleSheet" class="sheet">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 id="stitle" style="margin:0;"></h3>
+        <span onclick="closeAll()" style="font-size: 24px; color: #64748b; cursor: pointer;">×</span>
+    </div>
+    <div style="display:flex; justify-content:space-between; margin-bottom:15px; background:#f1f5f9; padding:12px; border-radius:14px;">
+        <span id="sstock_info" style="color:var(--dark); font-weight:bold;"></span>
+        <span id="scurrent_price" style="color:var(--primary-dark); font-weight:bold;"></span>
+    </div>
+    <small>ရောင်းမည့်ပုံစံ</small>
+    <select id="sunit" onchange="calcSale()">
+        <option value="p">အထုပ်ကြီး (အိတ်လိုက်)</option>
+        <option value="u">အထုပ်သေး (တစ်ခုချင်း)</option>
+    </select>
+    <small>အရေအတွက်</small>
+    <input type="number" id="sqty" value="1" min="0.1" step="0.1" oninput="calcSale()">
+    
+    <div id="stockMsg" class="stock-error">⚠️ လက်ကျန်ထက် ပိုရောင်း၍မရပါ။</div>
+    <div class="price-box">ကျသင့်ငွေ: <b id="stotal">0</b> K</div>
+    <button id="addBtn" class="btn-main" style="background: var(--primary); color: var(--dark);" onclick="addToCart()">ဈေးခြင်းထဲထည့်မည်</button>
+</div>
+
+<div id="cartSheet" class="sheet">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3>🛒 အရောင်းစာရင်း (ဈေးခြင်း)</h3>
+        <span onclick="closeAll()" style="font-size: 24px; color: #64748b; cursor: pointer;">×</span>
+    </div>
+    <div id="citems"></div>
+    <div style="margin-top:20px; font-weight:bold; text-align:right; font-size:22px; color: var(--dark);">စုစုပေါင်း: <span id="ctotal" style="color: var(--primary-dark)">0</span> K</div>
+    <button class="btn-main" style="background:var(--success); border-color: var(--success); margin-top:15px;" onclick="checkout()">ရောင်းမည် (ငွေရှင်းမည်)</button>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, updateDoc, doc, deleteDoc, onSnapshot, getDoc, initializeFirestore, persistentLocalCache } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = { projectId: "myrecordsystem-af249" };
+    const app = initializeApp(firebaseConfig);
+    const fs = initializeFirestore(app, { localCache: persistentLocalCache() });
+    
+    let db = [], cart = [], editId = null, role = "", imgB64 = "";
+    let accs = JSON.parse(localStorage.getItem('pos_accs')) || { au:"admin", ap:"123", su:"staff", sp:"123", def_pp: 10, def_upp: 20 };
+    let cats = JSON.parse(localStorage.getItem('pos_cats')) || ["အလှကုန်", "စားသောက်ကုန်"];
+
+    window.togglePassword = (inputId, btn) => {
+        let input = document.getElementById(inputId);
+        if (input.type === "password") {
+            input.type = "text";
+            btn.innerText = "👁️‍🗨️";
+        } else {
+            input.type = "password";
+            btn.innerText = "👁️";
+        }
+    };
+
+    function showToast(msg) {
+        let t = document.getElementById("toast");
+        t.innerText = msg; 
+        t.classList.add("show");
+        setTimeout(() => { t.classList.remove("show"); }, 2500);
+    }
+
+    window.doLogin = () => {
+        let u = document.getElementById('l_u').value, p = document.getElementById('l_p').value;
+        if (u === accs.au && p === accs.ap) role = "admin";
+        else if (u === accs.su && p === accs.sp) role = "staff";
+        else { alert("Login မှားနေပါသည်"); return; }
+        document.getElementById('loginScreen').style.display = "none";
+        document.getElementById('appBody').style.display = "block";
+        if(role === "admin") { document.getElementById('adminBtn').style.display = "flex"; document.getElementById('setBtn').style.display = "flex"; }
+        render();
+    };
+
+    // 🚪 Logout စနစ်ကို ပိုမိုလှပသော နှုတ်ဆက်စာလွှာ Pop-up ဖြင့် ပြောင်းလဲခြင်း
+    window.doLogout = () => {
+        if(confirm("အကောင့်ထဲကနေ ထွက်မှာ သေချက်ပါသလား?")) {
+            // နှုတ်ဆက်စာလွှာ Screen ကို ပြသမည်
+            document.getElementById('goodbyeScreen').style.display = 'flex';
+            
+            setTimeout(() => {
+                // ၃ စက္ကန့်ပြည့်လျှင် စနစ်များကို Reset လုပ်ပြီး Login သို့ ခေါ်သွားမည်
+                role = "";
+                document.getElementById('l_u').value = "";
+                document.getElementById('l_p').value = "";
+                document.getElementById('adminBtn').style.display = "none";
+                document.getElementById('setBtn').style.display = "none";
+                document.getElementById('appBody').style.display = "none";
+                document.getElementById('goodbyeScreen').style.display = "none"; // နှုတ်ဆက်စာ ပိတ်မည်
+                document.getElementById('loginScreen').style.display = "flex";
+                showToast("အကောင့်မှ ထွက်ပြီးပါပြီ 🚪");
+            }, 3000); // ၃ စက္ကန့် စောင့်မည်
+        }
+    };
+
+    window.mCalc = () => {
+        let cp = parseFloat(document.getElementById('p_cp').value) || 0;
+        let pp = parseFloat(document.getElementById('p_pp').value) || 0;
+        let upp = parseFloat(document.getElementById('p_upp').value) || 0;
+        let ps = parseFloat(document.getElementById('p_ps').value) || 1;
+        let bp = Math.round(cp + (cp * pp / 100));
+        let up = Math.round((cp / ps) + ((cp / ps) * upp / 100));
+        document.getElementById('hint_bp').innerText = (bp - cp).toLocaleString();
+        document.getElementById('hint_up').innerText = Math.round(up - (cp/ps)).toLocaleString();
+        document.getElementById('m_bp').innerText = bp.toLocaleString();
+        document.getElementById('m_up').innerText = up.toLocaleString();
+        return { cp, pp, upp, ps, bp, up };
+    };
+
+    onSnapshot(collection(fs, "products"), (s) => { db = s.docs.map(d => ({ id: d.id, ...d.data() })); render(); });
+
+    window.save = async () => {
+        let n = document.getElementById('p_n').value; if(!n) return;
+        let v = mCalc();
+        let cat = document.getElementById('n_c').value || document.getElementById('p_c').value;
+        let data = { name:n, cat:cat, ...v, st: parseFloat(document.getElementById('p_st').value)||0, exp: document.getElementById('p_exp').value, img:imgB64 };
+        if(editId) await updateDoc(doc(fs, "products", editId), data); else await addDoc(collection(fs, "products"), data);
+        resetForm(); showToast("သိမ်းဆည်းပြီးပါပြီ ✅");
+    };
+
+    let curP = null;
+    window.openSale = (id) => { 
+        curP = db.find(x => x.id === id); 
+        document.getElementById('stitle').innerText = curP.name; 
+        document.getElementById('sstock_info').innerText = `လက်ကျန်: ${curP.st.toFixed(2)} အိတ်`; 
+        document.getElementById('sqty').value = 1; 
+        calcSale(); 
+        toggleSheet('saleSheet'); 
+    };
+
+    window.calcSale = () => {
+        let u = document.getElementById('sunit').value, q = parseFloat(document.getElementById('sqty').value)||0;
+        let price = (u === 'p' ? curP.bp : curP.up);
+        let deductNeeded = (u === 'p' ? q : q / curP.ps);
+        
+        if (deductNeeded > curP.st) {
+            document.getElementById('stockMsg').style.display = 'block';
+            document.getElementById('addBtn').disabled = true;
+        } else {
+            document.getElementById('stockMsg').style.display = 'none';
+            document.getElementById('addBtn').disabled = false;
+        }
+        
+        document.getElementById('scurrent_price').innerText = `၁ ${u==='p'?'အိတ်':'ထုပ်'}: ${price.toLocaleString()} K`;
+        document.getElementById('stotal').innerText = Math.round(q * price).toLocaleString();
+    };
+
+    window.addToCart = () => {
+        let u = document.getElementById('sunit').value, q = parseFloat(document.getElementById('sqty').value);
+        let price = (u === 'p' ? curP.bp : curP.up);
+        cart.push({ id:curP.id, name:curP.name, qty:q, unit:(u==='p'?'အိတ်':'ထုပ်'), total:q*price, deduct:(u==='p'?q:q/curP.ps) });
+        updateCart(); closeAll(); showToast("ဈေးခြင်းထဲထည့်ပြီး 🛒");
+    };
+
+    function updateCart() {
+        let t = 0; document.getElementById('cartCount').innerText = cart.length;
+        document.getElementById('citems').innerHTML = cart.map((i, idx) => {
+            t += i.total;
+            return `<div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #eee; align-items:center;">
+                <span>${i.name} (${i.qty} ${i.unit})</span>
+                <b style="color:var(--dark);">${i.total.toLocaleString()} K <span onclick="cart.splice(${idx},1);updateCart()" style="color:var(--danger); margin-left:15px; font-size:20px; cursor:pointer;">×</span></b>
+            </div>`;
+        }).join('');
+        document.getElementById('ctotal').innerText = t.toLocaleString();
+    }
+
+    window.checkout = async () => {
+        if(cart.length === 0) return;
+        for(let i of cart) {
+            let pRef = doc(fs, "products", i.id);
+            let pSnap = await getDoc(pRef);
+            if(pSnap.exists()) await updateDoc(pRef, { st: pSnap.data().st - i.deduct });
+        }
+        cart = []; updateCart(); closeAll(); showToast("ရောင်းချပြီးပါပြီ 💰");
+    };
+
+    window.saveSets = () => {
+        let au = document.getElementById('s_au').value || accs.au;
+        let ap = document.getElementById('s_ap').value || accs.ap;
+        let su = document.getElementById('s_su').value || accs.su;
+        let sp = document.getElementById('s_sp').value || accs.sp;
+
+        accs = { ...accs, au, ap, su, sp };
+        localStorage.setItem('pos_accs', JSON.stringify(accs));
+
+        showToast("Settings နှင့် Password များကို သိမ်းဆည်းပြီးပါပြီ ⚙️✅");
+        closeAll();
+        setTimeout(() => { location.reload(); }, 1000);
+    };
+
+    window.handleImg = (i) => { if(i.files[0]) { let r = new FileReader(); r.onload=(e)=>{ imgB64=e.target.result; document.getElementById('preImg').src=imgB64; document.getElementById('preImg').style.display='block'; document.getElementById('upText').style.display='none'; }; r.readAsDataURL(i.files[0]); } };
+    let filterCat = "အားလုံး";
+    window.setFilter = (c) => { filterCat = c; render(); };
+
+    function render() {
+        if(!role) return;
+        document.getElementById('p_c').innerHTML = cats.map(c => `<option value="${c}">${c}</option>`).join('');
+        document.getElementById('catFilter').innerHTML = ["အားလုံး", ...cats].map(c => `<button onclick="setFilter('${c}')" style="padding:10px 16px; border-radius:14px; border:1.5px solid ${filterCat===c?'var(--primary)':'#e2e8f0'}; background:${filterCat===c?'var(--dark)':'white'}; color:${filterCat===c?'white':'var(--dark)'}; margin-right:8px; font-weight:bold; white-space:nowrap; cursor:pointer;">${c}</button>`).join('');
+        let f = filterCat === "အားလုံး" ? db : db.filter(x => x.cat === filterCat);
+        document.getElementById('pGrid').innerHTML = f.map(p => `<div class="card"><img src="${p.img || 'https://via.placeholder.com/150'}"><b>${p.name}</b><small>${p.st.toFixed(2)} အိတ်ကျန်</small><button class="btn-sell" onclick="openSale('${p.id}')">ရောင်းမည်</button></div>`).join('');
+        if(role === "admin") {
+            document.getElementById('invList').innerHTML = db.map(p => `<div class="inv-item"><b>${p.name}</b><br><small>ရင်း: ${p.cp} | ကျန်: ${p.st.toFixed(2)}</small><div style="margin-top:8px;"><button onclick="editP('${p.id}')" style="background:var(--dark); color:white; border:none; padding:5px 12px; border-radius:8px;">ပြင်</button> <button onclick="delP('${p.id}')" style="color:var(--danger); background:none; border:none; margin-left:10px; font-weight:bold;">ဖျက်</button></div></div>`).join('');
+        }
+
+        document.getElementById('s_au').value = accs.au;
+        document.getElementById('s_ap').value = accs.ap;
+        document.getElementById('s_su').value = accs.su;
+        document.getElementById('s_sp').value = accs.sp;
+    }
+
+    window.editP = (id) => { 
+        let p = db.find(x => x.id === id); editId = id; 
+        document.getElementById('p_n').value = p.name; document.getElementById('p_c').value = p.cat;
+        document.getElementById('p_cp').value = p.cp; document.getElementById('p_pp').value = p.pp;
+        document.getElementById('p_ps').value = p.ps; document.getElementById('p_upp').value = p.upp;
+        document.getElementById('p_st').value = p.st; document.getElementById('p_exp').value = p.exp;
+        imgB64 = p.img || ""; if(imgB64) { document.getElementById('preImg').src = imgB64; document.getElementById('preImg').style.display = 'block'; document.getElementById('upText').style.display = 'none'; }
+        document.getElementById('cancelEdit').style.display = "block"; mCalc(); 
+    };
+    window.delP = async (id) => { if(confirm("ဖျက်မှာလား?")) await deleteDoc(doc(fs, "products", id)); };
+    window.resetForm = () => { editId = null; imgB64 = ""; document.getElementById('p_n').value = ""; document.getElementById('preImg').style.display = 'none'; document.getElementById('upText').style.display = 'block'; document.getElementById('cancelEdit').style.display = "none"; mCalc(); };
+    window.toggleSheet = (id) => { document.getElementById(id).classList.add('show'); document.getElementById('overlay').style.display='block'; };
+    window.closeAll = () => { document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('show')); document.getElementById('overlay').style.display='none'; };
+</script>
+</body>
+</html>
