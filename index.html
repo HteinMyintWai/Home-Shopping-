@@ -147,45 +147,92 @@
         }
         .fab-btn:active { transform: scale(0.9); }
         
-        /* 🎪 OGGY ANIMATED LOGOUT BUTTON STYLE (ကာတွန်းပုံအစစ်အရှင်) */
-        .oggy-logout-btn {
+        /* 🍔 ဟန်ဘာကာ ဓာတ်ပုံစစ်စစ် Logout ခလုတ်ဒီဇိုင်း */
+        .burger-logout-btn {
             pointer-events: auto; 
-            width: 62px; 
-            height: 62px; 
+            width: 58px; 
+            height: 58px; 
             border-radius: 50%; 
             cursor: pointer; 
-            padding: 3px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3); 
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            border: 2.5px solid var(--primary); 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15); 
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            border: 2px solid var(--primary); 
             outline: none; 
             background: #ffffff;
+            padding: 0;
             overflow: hidden;
         }
         
-        /* ခလုတ်ကို ထိလိုက်လျှင် အနည်းငယ် ကြီးလာစေရန် */
-        .oggy-logout-btn:hover {
-            transform: scale(1.1);
-            border-color: #ff4757; /* နှိပ်ခါနီးရင် ဘောင်လေး နီသွားမည် */
+        .burger-logout-btn:hover {
+            transform: scale(1.1) rotate(5deg);
+            border-color: #ffaa00;
         }
-        .oggy-logout-btn:active { 
-            transform: scale(0.9); 
+        .burger-logout-btn:active { 
+            transform: scale(0.95); 
         }
         
-        .oggy-img { 
+        .burger-img { 
             width: 100%; 
             height: 100%; 
             object-fit: cover; 
-            border-radius: 50%;
+        }
+
+        /* 👑 နှုတ်ခွန်းဆက်စာ Pop-up အလှစနစ် (Goodbye Modal) */
+        .goodbye-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(13, 27, 42, 0.85); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            z-index: 10005; display: none; align-items: center; justify-content: center;
+        }
+        .goodbye-card {
+            width: 80%; max-width: 340px; text-align: center;
+            background: white; padding: 40px 25px; border-radius: 32px;
+            border: 2px solid var(--primary);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .goodbye-card h3 {
+            font-size: 22px; color: var(--dark); margin: 15px 0 10px 0; font-weight: bold;
+        }
+        .goodbye-card p {
+            font-size: 15px; color: #64748b; line-height: 1.6; margin: 0 0 25px 0;
+        }
+        .loader-bar {
+            width: 100%; height: 5px; background: #f1f5f9; border-radius: 10px; overflow: hidden; position: relative;
+        }
+        .loader-progress {
+            width: 0%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            animation: loadOut 3s linear forwards;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes loadOut {
+            0% { width: 0%; }
+            100% { width: 100%; }
         }
     </style>
 </head>
 <body>
 
 <div id="toast"></div>
+
+<div id="goodbyeScreen" class="goodbye-screen">
+    <div class="goodbye-card">
+        <img src="https://i.ibb.co/3mYmG3n/burger-transparent.png" alt="Burger" style="width: 80px; height: 80px; object-fit: contain; margin: 0 auto;">
+        <h3>တာ့တာ... သွားပြီနော် 🍔</h3>
+        <p>မင်္ဂလာရှိသောနေ့လေး ဖြစ်ပါစေရှင်...<br>နောက်လည်း ပြန်လာခဲ့ဖို့ မျှော်လင့်ပါတယ်နော်။</p>
+        <div class="loader-bar">
+            <div class="loader-progress"></div>
+        </div>
+        <small style="color: #a0aec0; margin-top: 10px; font-weight: normal; font-size: 11px; display: block;">ခေတ္တစောင့်ဆိုင်းပေးပါ...</small>
+    </div>
+</div>
 
 <div id="loginScreen">
     <div class="login-card">
@@ -214,8 +261,8 @@
             🛒 <span id="cartCount" style="position:absolute; top:-2px; right:-2px; background:var(--danger); color:white; font-size:11px; font-weight:bold; padding:2px 6px; border-radius:50%; border: 1px solid white;">0</span>
         </button>
         
-        <button id="logoutBtn" class="oggy-logout-btn" onclick="doLogout()" title="Logout ပြန်ထွက်မည်">
-            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbW9pM3RndXN5cHZ6Nnh6bnp5ZXh5ZzF3bHByY3ZndXpzeXh3Y3ZtayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/v8S7A7hY9uI6X7B9On/giphy.gif" alt="Oggy GIF" class="oggy-img">
+        <button id="logoutBtn" class="burger-logout-btn" onclick="doLogout()" title="Logout ပြန်ထွက်မည်">
+            <img src="https://i.ibb.co/3mYmG3n/burger-transparent.png" alt="Burger Logout" class="burger-img">
         </button>
     </div>
 </div>
@@ -362,16 +409,24 @@
         render();
     };
 
+    // 🚪 Logout စနစ်ကို ပိုမိုလှပသော နှုတ်ဆက်စာလွှာ Pop-up ဖြင့် ပြောင်းလဲခြင်း
     window.doLogout = () => {
         if(confirm("အကောင့်ထဲကနေ ထွက်မှာ သေချာပါသလား?")) {
-            role = "";
-            document.getElementById('l_u').value = "";
-            document.getElementById('l_p').value = "";
-            document.getElementById('adminBtn').style.display = "none";
-            document.getElementById('setBtn').style.display = "none";
-            document.getElementById('appBody').style.display = "none";
-            document.getElementById('loginScreen').style.display = "flex";
-            showToast("အကောင့်မှ ထွက်ပြီးပါပြီ 🚪");
+            // နှုတ်ဆက်စာလွှာ Screen ကို ပြသမည်
+            document.getElementById('goodbyeScreen').style.display = 'flex';
+            
+            setTimeout(() => {
+                // ၃ စက္ကန့်ပြည့်လျှင် စနစ်များကို Reset လုပ်ပြီး Login သို့ ခေါ်သွားမည်
+                role = "";
+                document.getElementById('l_u').value = "";
+                document.getElementById('l_p').value = "";
+                document.getElementById('adminBtn').style.display = "none";
+                document.getElementById('setBtn').style.display = "none";
+                document.getElementById('appBody').style.display = "none";
+                document.getElementById('goodbyeScreen').style.display = "none"; // နှုတ်ဆက်စာ ပိတ်မည်
+                document.getElementById('loginScreen').style.display = "flex";
+                showToast("အကောင့်မှ ထွက်ပြီးပါပြီ 🚪");
+            }, 3000); // ၃ စက္ကန့် စောင့်မည်
         }
     };
 
