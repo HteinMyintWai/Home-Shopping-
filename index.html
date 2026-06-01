@@ -299,7 +299,7 @@
         <div><small>အသေးအမြတ် %</small><input type="number" id="p_upp" value="20" oninput="mCalc()"></div>
     </div>
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-        <div><small>လက်ကျန် (အိတ်)</small><input type="number" id="p_st" value="0"></div>
+        <div><small>...လက်ကျန် (အိတ်)</small><input type="number" id="p_st" value="0"></div>
         <div><small>Expiry Date</small><input type="date" id="p_exp"></div>
     </div>
     
@@ -393,6 +393,7 @@
         setTimeout(() => { t.classList.remove("show"); }, 2500);
     }
 
+    // 🔐 Global Window Scope သို့ ပြောင်းလဲပြင်ဆင်ထားပါသည်
     window.doLogin = () => {
         let u = document.getElementById('l_u').value, p = document.getElementById('l_p').value;
         if (u === accs.au && p === accs.ap) role = "admin";
@@ -400,11 +401,14 @@
         else { alert("Login မှားနေပါသည်"); return; }
         document.getElementById('loginScreen').style.display = "none";
         document.getElementById('appBody').style.display = "block";
-        if(role === "admin") { document.getElementById('adminBtn').style.display = "flex"; document.getElementById('setBtn').style.display = "flex"; }
+        if(role === "admin") { 
+            document.getElementById('adminBtn').style.display = "flex"; 
+            document.getElementById('setBtn').style.display = "flex"; 
+        }
         render();
     };
 
-    // 🚪 Logout စနစ်
+    // 🚪 Global Window Scope သို့ ပြောင်းလဲပြင်ဆင်ထားပါသည်
     window.doLogout = () => {
         if(confirm("အကောင့်ထဲကနေ ထွက်မှာ သေချာပါသလား?")) {
             document.getElementById('goodbyeScreen').style.display = 'flex';
@@ -419,7 +423,7 @@
                 document.getElementById('goodbyeScreen').style.display = "none";
                 document.getElementById('loginScreen').style.display = "flex";
                 showToast("အကောင့်မှ ထွက်ပြီးပါပြီ 🚪");
-            }, 2000); // စောင့်ဆိုင်းချိန် ၂ စက္ကန့်သို့ လျှော့ချထားသည်
+            }, 2000);
         }
     };
 
@@ -482,13 +486,14 @@
         updateCart(); closeAll(); showToast("ဈေးခြင်းထဲထည့်ပြီး 🛒");
     };
 
-    function updateCart() {
+    // Global scope သို့ ချိတ်ဆက်ပေးရန် window.updateCart သို့ ပြောင်းလဲထားပါသည်
+    window.updateCart = () => {
         let t = 0; document.getElementById('cartCount').innerText = cart.length;
         document.getElementById('citems').innerHTML = cart.map((i, idx) => {
             t += i.total;
             return `<div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #eee; align-items:center;">
                 <span>${i.name} (${i.qty} ${i.unit})</span>
-                <b style="color:var(--dark);">${i.total.toLocaleString()} K <span onclick="cart.splice(${idx},1);updateCart()" style="color:var(--danger); margin-left:15px; font-size:20px; cursor:pointer;">×</span></b>
+                <b style="color:var(--dark);">${i.total.toLocaleString()} K <span onclick="cart.splice(${idx},1);window.updateCart()" style="color:var(--danger); margin-left:15px; font-size:20px; cursor:pointer;">×</span></b>
             </div>`;
         }).join('');
         document.getElementById('ctotal').innerText = t.toLocaleString();
@@ -501,7 +506,7 @@
             let pSnap = await getDoc(pRef);
             if(pSnap.exists()) await updateDoc(pRef, { st: pSnap.data().st - i.deduct });
         }
-        cart = []; updateCart(); closeAll(); showToast("ရောင်းချပြီးပါပြီ 💰");
+        cart = []; window.updateCart(); closeAll(); showToast("ရောင်းချပြီးပါပြီ 💰");
     };
 
     window.saveSets = () => {
